@@ -40,6 +40,7 @@ namespace XamarinDev
                 }
             }
         }
+
         public static string DefaultMobileRedirectUri = TestConstants.MobileDefaultRedirectUri;
 
         public const string RedirectUriB2C = "msale3b9ad76-9763-4827-b088-80c7a7888f79://auth";
