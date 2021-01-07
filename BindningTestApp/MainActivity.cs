@@ -30,17 +30,17 @@ namespace BindningTestApp
 
         private void tryAuth()
         {
+            //AppListner listner = new AppListner();
 
-            AppListner listner = new AppListner();
+            //MsalAndroid.PublicClientApplication.Create(
+            //    Android.App.Application.Context,
+            //    "16dab2ba-145d-4b1b-8569-bf4b9aed4dc8",
+            //    "https://login.microsoftonline.com/common/",
+            //    "msauth://com.companyname.xamarindev/Fy2zjTiLYs5sXM3sGy+PGcv8MaQ=",
+            //    listner);
 
-            MsalAndroid.PublicClientApplication.Create(
-                Android.App.Application.Context,
-                "16dab2ba-145d-4b1b-8569-bf4b9aed4dc8",
-                "https://login.microsoftonline.com/common/",
-                "msauth://com.companyname.xamarindev/Fy2zjTiLYs5sXM3sGy+PGcv8MaQ=",
-                listner);
-
-            var _boundApplication = listner.PublicClientApplication;
+            Java.IO.File config = new Java.IO.File("config.json");
+            var _boundApplication = MsalAndroid.PublicClientApplication.CreateSingleAccountPublicClientApplication(Android.App.Application.Context, config);
 
 
             AndroidAuthCallback callback = new AndroidAuthCallback();
@@ -53,6 +53,7 @@ namespace BindningTestApp
             MsalAndroid.AcquireTokenParameters parameters = builder.Build() as MsalAndroid.AcquireTokenParameters;
             _boundApplication.AcquireToken(parameters);
             Console.WriteLine("DONE");
+            Console.WriteLine(callback.Result);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -89,7 +90,7 @@ namespace BindningTestApp
 
     internal class AndroidAuthCallback : global::Java.Lang.Object, MsalAndroid.IAuthenticationCallback
     {
-        MsalAndroid.IAuthenticationResult Result { get; set; }
+        public MsalAndroid.IAuthenticationResult Result { get; set; }
 
         public void OnCancel()
         {
