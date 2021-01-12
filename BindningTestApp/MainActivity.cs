@@ -39,9 +39,22 @@ namespace BindningTestApp
             //    "msauth://com.companyname.xamarindev/Fy2zjTiLYs5sXM3sGy+PGcv8MaQ=",
             //    listner);
 
-            Java.IO.File config = new Java.IO.File("config.json");
-            var _boundApplication = MsalAndroid.PublicClientApplication.CreateSingleAccountPublicClientApplication(Android.App.Application.Context, config);
 
+
+            Java.IO.File config = null;
+            string content;
+            Android.Content.Res.AssetManager assets = this.Assets;
+            using (System.IO.StreamReader sr = new System.IO.StreamReader(assets.Open("config.json")))
+            {
+                System.IO.Stream s = sr.BaseStream;
+                config = new Java.IO.File("config.json");
+            }
+            var _boundApplication = MsalAndroid.PublicClientApplication.CreateSingleAccountPublicClientApplication
+                                                                                (
+                                                                                    Android.App.Application.Context,
+                                                                                    //config
+                                                                                    Resource.Raw.msal_default_config
+                                                                                );
 
             AndroidAuthCallback callback = new AndroidAuthCallback();
 
