@@ -7,7 +7,7 @@
     <TargetFrameworkNetCore>netcoreapp2.1</TargetFrameworkNetCore>
     
     <TargetFrameworkNetDesktop45>net45</TargetFrameworkNetDesktop45>
-    <TargetFrameworkUap>uap10.0</TargetFrameworkUap>
+    <!--<TargetFrameworkUap>uap10.0</TargetFrameworkUap>-->
     <TargetFrameworkIos>Xamarin.iOS10</TargetFrameworkIos>
     <TargetFrameworkMac>xamarinmac20</TargetFrameworkMac>
     <TargetFrameworkAndroid9>MonoAndroid9.0</TargetFrameworkAndroid9>
