@@ -129,8 +129,11 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
             return Task.FromResult(request);
         }
 
-        public MsalTokenResponse ParseSuccesfullWamResponse(WebTokenResponse webTokenResponse)
+        public MsalTokenResponse ParseSuccesfullWamResponse(
+            WebTokenResponse webTokenResponse, 
+            out Dictionary<string, string> allResponseProperties)
         {
+            allResponseProperties = new Dictionary<string, string>(8, StringComparer.OrdinalIgnoreCase);
             if (!webTokenResponse.Properties.TryGetValue("TokenExpiresOn", out string expiresOn))
             {
                 _logger.Warning("Result from WAM does not have expiration. Marking access token as expired.");
@@ -168,10 +171,10 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
             _logger.InfoPii("Result from WAM scopes: " + scopes,
                 "Result from WAM has scopes? " + hasScopes);
 
-            //foreach (var kvp in webTokenResponse.Properties)
-            //{
-            //    Debug.WriteLine($"Other params {kvp.Key}: {kvp.Value}");
-            //}
+            foreach (var kvp in webTokenResponse.Properties)
+            {
+                allResponseProperties.Add(kvp.Key, kvp.Value);
+            }
 
             MsalTokenResponse msalTokenResponse = new MsalTokenResponse()
             {
@@ -222,5 +225,10 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
             return "WAM_unexpected_aad_error";
         }
 
+        // needed only for MSA-Passthrough, implemented only by MSAPlugin
+        public Task<WebTokenRequest> CreateWebTokenRequestAsync(WebAccountProvider provider, string clientId, string scopes)
+        {
+            throw new NotImplementedException();
+        }       
     }
 }

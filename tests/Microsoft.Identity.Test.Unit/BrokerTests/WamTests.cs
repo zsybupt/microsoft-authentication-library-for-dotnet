@@ -138,7 +138,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
                 _wamProxy.GetTokenSilentlyAsync(webAccount, webTokenRequest).
                     Returns(Task.FromResult(webTokenResponseWrapper));
 
-                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse).Returns(_msalTokenResponse);
+                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse, out _).Returns(_msalTokenResponse);
 
                 // Act
                 var result = await _wamBroker.AcquireTokenSilentAsync(requestParams, atsParams).ConfigureAwait(false);
@@ -168,7 +168,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
                 webTokenResponseWrapper.ResponseStatus.Returns(WebTokenRequestStatus.AccountSwitch);
                 var webTokenResponse = new WebTokenResponse();
                 webTokenResponseWrapper.ResponseData.Returns(new List<WebTokenResponse>() { webTokenResponse });
-                _aadPlugin.ParseSuccesfullWamResponse(Arg.Any<WebTokenResponse>()).Returns(_msalTokenResponse);
+                _aadPlugin.ParseSuccesfullWamResponse(Arg.Any<WebTokenResponse>(), out _).Returns(_msalTokenResponse);
 
                 // Act
                 var result = await _wamBroker.AcquireTokenSilentAsync(requestParams, new AcquireTokenSilentParameters())
@@ -318,7 +318,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
 
                 _wamProxy.GetTokenSilentlyAsync(webAccount, webTokenRequest).
                     Returns(Task.FromResult(webTokenResponseWrapper));
-                _msaPlugin.ParseSuccesfullWamResponse(webTokenResponse).Returns(_msalTokenResponse);
+                _msaPlugin.ParseSuccesfullWamResponse(webTokenResponse, out _).Returns(_msalTokenResponse);
 
 
                 // Act
@@ -394,7 +394,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
                 _wamProxy.GetTokenSilentlyForDefaultAccountAsync(webTokenRequest).
                     Returns(Task.FromResult(webTokenResponseWrapper));
 
-                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse).Returns(_msalTokenResponse);
+                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse, out _).Returns(_msalTokenResponse);
 
                 // Act
                 var result = await _wamBroker.AcquireTokenSilentDefaultUserAsync(requestParams, atsParams).ConfigureAwait(false);
@@ -452,7 +452,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
 
                 _wamProxy.RequestTokenForWindowAsync(Arg.Any<IntPtr>(), webTokenRequest, webAccount).
                     Returns(Task.FromResult(webTokenResponseWrapper));
-                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse).Returns(_msalTokenResponse);
+                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse, out _).Returns(_msalTokenResponse);
 
                 // Act
                 var result = await _wamBroker.AcquireTokenInteractiveAsync(
@@ -496,7 +496,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
 
                 _wamProxy.RequestTokenForWindowAsync(Arg.Any<IntPtr>(), webTokenRequest).
                     Returns(Task.FromResult(webTokenResponseWrapper));
-                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse).Returns(_msalTokenResponse);
+                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse, out _).Returns(_msalTokenResponse);
 
                 // Act
                 var result = await _wamBroker.AcquireTokenInteractiveAsync(
@@ -545,7 +545,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
 
                 _wamProxy.RequestTokenForWindowAsync(Arg.Any<IntPtr>(), webTokenRequest).
                     Returns(Task.FromResult(webTokenResponseWrapper));
-                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse).Returns(_msalTokenResponse);
+                _aadPlugin.ParseSuccesfullWamResponse(webTokenResponse, out _).Returns(_msalTokenResponse);
 
                 var atiParams = new AcquireTokenInteractiveParameters();
 

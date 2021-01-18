@@ -136,7 +136,8 @@ namespace Microsoft.Identity.Client
         public PublicClientApplicationBuilder WithBroker(bool enableBroker = true)
         {
 #if NET45
-            throw new PlatformNotSupportedException("The Windows broker is not available on .NET Framework 4.5, please use at least .NET Framework 4.6.2");
+            throw new PlatformNotSupportedException(
+                "The Windows broker is not available on .NET Framework 4.5, please use at least .NET Framework 4.6.2");
 #endif
 
 #if NET461 || NET_CORE
