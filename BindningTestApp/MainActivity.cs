@@ -30,7 +30,7 @@ namespace BindningTestApp
 
         private void tryAuth()
         {
-            //AppListner listner = new AppListner();
+            AppListner listner = new AppListner();
 
             //MsalAndroid.PublicClientApplication.Create(
             //    Android.App.Application.Context,
@@ -49,12 +49,13 @@ namespace BindningTestApp
                 System.IO.Stream s = sr.BaseStream;
                 config = new Java.IO.File("config.json");
             }
-            var _boundApplication = MsalAndroid.PublicClientApplication.CreateSingleAccountPublicClientApplication
+            MsalAndroid.PublicClientApplication.CreateSingleAccountPublicClientApplication
                                                                                 (
                                                                                     Android.App.Application.Context,
                                                                                     //config
-                                                                                    Resource.Raw.msal_default_config
-                                                                                );
+                                                                                    Resource.Raw.msal_default_config,
+                                                                                    listner);
+            var _boundApplication = listner.PublicClientApplication;
 
             AndroidAuthCallback callback = new AndroidAuthCallback();
 
@@ -121,13 +122,13 @@ namespace BindningTestApp
         }
     }
 
-    internal class AppListner : global::Java.Lang.Object, MsalAndroid.IPublicClientApplicationApplicationCreatedListener
+    internal class AppListner : global::Java.Lang.Object, MsalAndroid.IPublicClientApplicationSingleAccountApplicationCreatedListener
     {
         public MsalAndroid.IPublicClientApplication PublicClientApplication 
         { get; 
             set; }
 
-        public void OnCreated(MsalAndroid.IPublicClientApplication publicClientApplication)
+        public void OnCreated(MsalAndroid.ISingleAccountPublicClientApplication publicClientApplication)
         {
             PublicClientApplication = publicClientApplication;
         }
