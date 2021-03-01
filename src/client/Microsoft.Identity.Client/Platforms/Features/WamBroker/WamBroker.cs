@@ -102,6 +102,8 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
                      ErrorMessageSuffix);
             }
 #endif
+          
+
 
             if (authenticationRequestParameters.Account != null ||
                 !string.IsNullOrEmpty(authenticationRequestParameters.LoginHint))
@@ -113,8 +115,7 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
                     isMsaPassthrough).ConfigureAwait(false);
 
                 IWamPlugin wamPlugin = isMsa ? _msaPlugin : _aadPlugin;
-                WebAccountProvider provider;
-                provider = await GetProviderAsync(authenticationRequestParameters.Authority.AuthorityInfo.CanonicalAuthority, isMsa)
+                WebAccountProvider provider = await GetProviderAsync(authenticationRequestParameters.Authority.AuthorityInfo.CanonicalAuthority, isMsa)
                     .ConfigureAwait(false);
 
                 if (PublicClientApplication.IsOperatingSystemAccount(authenticationRequestParameters.Account))
@@ -149,6 +150,48 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
                 }
             }
 
+            // AAD only 
+            if (authenticationRequestParameters.AuthorityInfo.AuthorityType == AuthorityType.Adfs ||
+                (authenticationRequestParameters.AuthorityInfo.AuthorityType == AuthorityType.Aad &&
+                (authenticationRequestParameters.Authority as AadAuthority).IsWorkAndSchoolOnly()))
+            {
+                WebAccountProvider provider = await
+                    _webAccountProviderFactory.GetAccountProviderAsync("organizations").ConfigureAwait(false);
+
+                var webTokenRequest = await _aadPlugin.CreateWebTokenRequestAsync(
+                    provider,
+                    authenticationRequestParameters,
+                    isForceLoginPrompt: true,
+                    isInteractive: true,
+                    isAccountInWam: false)
+               .ConfigureAwait(false);
+
+                AddPromptToRequest(acquireTokenInteractiveParameters.Prompt, true, webTokenRequest);
+
+                WamAdapters.AddMsalParamsToRequest(authenticationRequestParameters, webTokenRequest);
+
+                try
+                {
+                    IWebTokenRequestResultWrapper wamResult;
+                  
+                        wamResult = await _wamProxy.RequestTokenForWindowAsync(
+                              _parentHandle,
+                              webTokenRequest).ConfigureAwait(false);
+
+                    return WamAdapters.CreateMsalResponseFromWamResponse(
+                        wamResult, _aadPlugin, _logger, isInteractive: true);
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorPii(ex);
+                    throw new MsalServiceException(
+                        MsalError.WamInteractiveError,
+                        "AcquireTokenInteractive without picker failed. See inner exception for details. ", ex);
+                }
+            }
+
             return await AcquireInteractiveWithPickerAsync(
                 authenticationRequestParameters,
                 acquireTokenInteractiveParameters.Prompt)
@@ -179,7 +222,7 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
                 authenticationRequestParameters,
                 isForceLoginPrompt: isForceLoginPrompt,
                 isInteractive: true,
-                isAccountInWam: true)
+                isAccountInWam: wamAccount != null)
            .ConfigureAwait(false);
 
             AddPromptToRequest(msalPrompt, isForceLoginPrompt, webTokenRequest);
