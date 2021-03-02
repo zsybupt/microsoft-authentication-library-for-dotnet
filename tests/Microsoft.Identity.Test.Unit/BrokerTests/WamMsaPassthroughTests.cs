@@ -89,12 +89,12 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
                     TestConstants.ClientId,
                     MsaPassthroughHandler.TransferTokenScopes)
                     .Returns(Task.FromResult(transferTokenRequest));
-                var webTokenResponseWrapper2 = Substitute.For<IWebTokenRequestResultWrapper>();
+                var msaResponseWrapper = Substitute.For<IWebTokenRequestResultWrapper>();
                 var transferTokenRequestResult = Substitute.For<IWebTokenRequestResultWrapper>();
                 transferTokenRequestResult.ResponseStatus.Returns(WebTokenRequestStatus.Success);
                 //WebAccount accountFromMsaProvider = new WebAccount(msaProvider, "user@outlook.com", WebAccountState.Connected);
                 var transferTokenResponse = new WebTokenResponse("transfer_token");
-                webTokenResponseWrapper2.ResponseData.Returns(new List<WebTokenResponse>() { transferTokenResponse });
+                msaResponseWrapper.ResponseData.Returns(new List<WebTokenResponse>() { transferTokenResponse });
                 _msaPlugin.ParseSuccessfullWamResponse(Arg.Any<WebTokenResponse>(), out Arg.Any<Dictionary<string, string>>())
                     .Returns(x =>
                 {
@@ -103,7 +103,7 @@ namespace Microsoft.Identity.Test.Unit.BrokerTests
                     return new MsalTokenResponse();
                 });
 
-                _wamProxy.RequestTokenForWindowAsync(IntPtr.Zero, transferTokenRequest).Returns(webTokenResponseWrapper2);
+                _wamProxy.RequestTokenForWindowAsync(IntPtr.Zero, transferTokenRequest).Returns(msaResponseWrapper);
 
                 // Act
                 var transferToken = await _msaPassthroughHandler.TryFetchTransferTokenAsync(requestParams, msaProvider)
