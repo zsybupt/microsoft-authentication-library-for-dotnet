@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#if !NETSTANDARD
+#if SUPPORTS_WAM
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;

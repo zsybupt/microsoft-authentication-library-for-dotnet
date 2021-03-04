@@ -128,7 +128,7 @@ namespace Microsoft.Identity.Client
         /// </summary>
         /// <param name="account">Instance of the account that needs to be removed</param>
         public async Task RemoveAsync(IAccount account)
-        {
+        { 
             RequestContext requestContext = CreateRequestContext(Guid.NewGuid());
 
             if (account != null && UserTokenCacheInternal != null)

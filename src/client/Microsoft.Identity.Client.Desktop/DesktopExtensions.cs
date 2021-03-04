@@ -22,11 +22,23 @@ namespace Microsoft.Identity.Client.Desktop
         /// <remarks>These extensions live in a separate package to avoid adding dependencies to MSAL</remarks>
         public static PublicClientApplicationBuilder WithDesktopFeatures(this PublicClientApplicationBuilder builder)
         {
-            WamExtension.AddSupportForWam(builder);
-            AddSupportForWebView2(builder);
+#if NET5
+            throw new MsalClientException("net5", "The MSAL desktop features use Windows constructs such as Windows.Forms. To use this package, please target:" +
+                " net5-windows10.0.17763 instead of net5.");
+#endif
 
+#if SUPPORTS_WEBVIEW2
+            AddSupportForWebView2(builder);
+#endif
+#if SUPPORTS_WAM
+            WamExtension.AddSupportForWam(builder);
+#endif
+#pragma warning disable CS0162 // Unreachable code detected
             return builder;
-        }       
+#pragma warning restore CS0162 // Unreachable code detected
+        }
+
+#if SUPPORTS_WEBVIEW2
 
         /// <summary>
         /// Enables Windows broker flows on older platforms, such as .NET framework, where these are not available in the box with Microsoft.Identity.Client
@@ -34,13 +46,17 @@ namespace Microsoft.Identity.Client.Desktop
         /// </summary>
         private static void AddSupportForWebView2(PublicClientApplicationBuilder builder)
         {
-#if NET45_OR_GREATER
-            builder.Config.WebUiFactoryCreator =
-                () => new MsalDesktopWebUiFactory(fallbackToLegacyWebBrowser: true);
+            
+#if DESKTOP
+    bool fallbackToLegacyWebBrowser = true;
 #else
-      builder.Config.WebUiFactoryCreator =
-                () => new MsalDesktopWebUiFactory(fallbackToLegacyWebBrowser: false);
+    bool fallbackToLegacyWebBrowser = false;
 #endif
+
+            builder.Config.WebUiFactoryCreator =
+                () => new MsalDesktopWebUiFactory(fallbackToLegacyWebBrowser: fallbackToLegacyWebBrowser);
         }
+#endif
+
     }
 }

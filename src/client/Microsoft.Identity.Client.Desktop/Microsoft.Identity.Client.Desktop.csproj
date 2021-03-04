@@ -1,12 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 
     <TargetFrameworkNetDesktop>net461</TargetFrameworkNetDesktop>
     <TargetFrameworkNetCore>netcoreapp3.1</TargetFrameworkNetCore>
-    <TargetFrameworks>$(TargetFrameworkNetDesktop);$(TargetFrameworkNetCore)</TargetFrameworks>
+    <TargetFrameworkNet5>net5</TargetFrameworkNet5>
+    <TargetFrameworkNet5Win>net5-windows</TargetFrameworkNet5Win>
+    <TargetFrameworkNet5Win10>net5-windows10.0.17763.0</TargetFrameworkNet5Win10>
+    
+    <TargetFrameworks>$(TargetFrameworkNetDesktop);$(TargetFrameworkNetCore);$(TargetFrameworkNet5);$(TargetFrameworkNet5Win);$(TargetFrameworkNet5Win10)</TargetFrameworks>
 
     <PathToMsalSources>$(MSBuildThisFileDirectory)../Microsoft.Identity.Client/</PathToMsalSources>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet and AssemblyInfo metadata">
@@ -42,25 +45,52 @@
 
 
   <PropertyGroup Condition="'$(TargetFramework)' == '$(TargetFrameworkNetDesktop)'">
-    <DefineConstants>$(DefineConstants);DESKTOP</DefineConstants>
+    <DefineConstants>$(DefineConstants);DESKTOP;SUPPORTS_WAM;SUPPORTS_WEBVIEW2;</DefineConstants>
+    <SUPPORTS_WAM>true</SUPPORTS_WAM>
+    <SUPPORTS_WEBVIEW2>true</SUPPORTS_WEBVIEW2>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == '$(TargetFrameworkNetCore)'">
-    <DefineConstants>$(DefineConstants);NET_CORE</DefineConstants>
+    <DefineConstants>$(DefineConstants);NET_CORE;SUPPORTS_WAM;SUPPORTS_WEBVIEW2;</DefineConstants>
+    <SUPPORTS_WAM>true</SUPPORTS_WAM>
+    <SUPPORTS_WEBVIEW2>true</SUPPORTS_WEBVIEW2>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(TargetFrameworkNet5)'">
+    <DefineConstants>$(DefineConstants);NET5</DefineConstants>
+    <SUPPORTS_WAM>false</SUPPORTS_WAM>
+    <SUPPORTS_WEBVIEW2>false</SUPPORTS_WEBVIEW2>
+    <!-- no suport for WAM or WV2 because they rely on WinForms-->
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(TargetFrameworkNet5Win)'">
+    <DefineConstants>$(DefineConstants);NET5_WIN7_AND_UP;SUPPORTS_WEBVIEW2;</DefineConstants>
+    <SUPPORTS_WAM>false</SUPPORTS_WAM>
+    <SUPPORTS_WEBVIEW2>true</SUPPORTS_WEBVIEW2>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(TargetFrameworkNet5Win10)'">
+    <!-- no support for WAM or WV2 because already in MSAL -->
+    <SUPPORTS_WAM>false</SUPPORTS_WAM>
+    <SUPPORTS_WEBVIEW2>false</SUPPORTS_WEBVIEW2>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == '$(TargetFrameworkNetDesktop)' or '$(TargetFramework)' == '$(TargetFrameworkNetCore)'">
-    
+  <ItemGroup Condition="'$(SUPPORTS_WAM)' == 'true' or '$(SUPPORTS_WEBVIEW2)' == 'true'">
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(SUPPORTS_WAM)' == 'true' or '$(SUPPORTS_WEBVIEW2)' == 'true'">
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(SUPPORTS_WAM)' == 'true'">
     <Compile Include="$(PathToMsalSources)\Platforms\Features\WamBroker\**\*.cs" LinkBase="Features/WAM" />
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.17763.1000" />
-    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
 
+  <ItemGroup Condition="'$(SUPPORTS_WEBVIEW2)' == 'true'">
     <Compile Include="$(PathToMsalSources)\Platforms\Features\WebView2WebUi\**\*.cs" LinkBase="Features/WebView2WebUi" />
     
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.705.50" />
-
   </ItemGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.Identity.Client\Microsoft.Identity.Client.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
+#if SUPPORTS_WEBVIEW2
 using System;
 using Microsoft.Identity.Client.ApiConfig.Parameters;
 using Microsoft.Identity.Client.Internal;
@@ -69,3 +69,4 @@ namespace Microsoft.Identity.Client.Desktop
         }
     }
 }
+#endif
