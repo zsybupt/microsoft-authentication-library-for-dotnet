@@ -9,7 +9,7 @@ using Windows.Security.Authentication.Web.Core;
 using Windows.Security.Credentials;
 using Windows.UI.ApplicationSettings;
 using System.Runtime.InteropServices;
-using Microsoft.Identity.Client.PlatformsCommon.Shared;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOS;
 
 #if NET5_WIN
 using Microsoft.Identity.Client.Platforms.net5win;

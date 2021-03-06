@@ -14,7 +14,6 @@ using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.Internal.Broker;
 using Microsoft.Identity.Client.Internal.Requests;
 using Microsoft.Identity.Client.OAuth2;
-using Microsoft.Identity.Client.PlatformsCommon.Shared;
 using Microsoft.Identity.Client.UI;
 using Windows.Foundation.Metadata;
 using Windows.Security.Authentication.Web.Core;
@@ -22,6 +21,7 @@ using Windows.Security.Credentials;
 using Microsoft.Identity.Client.Utils;
 using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Instance.Discovery;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOS;
 
 #if DESKTOP || NET5_WIN
 using System.Runtime.InteropServices;
