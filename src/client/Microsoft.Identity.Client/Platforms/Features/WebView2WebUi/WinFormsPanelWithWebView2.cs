@@ -142,7 +142,7 @@ namespace Microsoft.Identity.Client.Platforms.Features.WebView2WebUi
                     : Screen.PrimaryScreen;
 
                 // Window height is set to 70% of the screen height.
-                int uiHeight = (int)(Math.Max(screen.WorkingArea.Height, 160) * 70.0 / NativeDpiHelper.ZoomPercent);
+                int uiHeight = (int)(Math.Max(screen.WorkingArea.Height, 160) * 70.0 / WindowsNativeDpiHelper.ZoomPercent);
                 var webBrowserPanel = new Panel();
                 webBrowserPanel.SuspendLayout();
                 SuspendLayout();
