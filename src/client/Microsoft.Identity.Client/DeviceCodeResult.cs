@@ -28,7 +28,7 @@ namespace Microsoft.Identity.Client
             long interval,
             string message,
             string clientId,
-            ISet<string> scopes)
+            IReadOnlyCollection<string> scopes)
         {
             UserCode = userCode;
             DeviceCode = deviceCode;
@@ -37,7 +37,7 @@ namespace Microsoft.Identity.Client
             Interval = interval;
             Message = message;
             ClientId = clientId;
-            Scopes = new ReadOnlyCollection<string>(scopes.AsEnumerable().ToList());
+            Scopes = scopes;
         }
 
         /// <summary>

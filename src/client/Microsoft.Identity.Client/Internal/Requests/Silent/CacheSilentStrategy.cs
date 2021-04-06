@@ -10,6 +10,7 @@ using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Cache.Items;
 using Microsoft.Identity.Client.Instance;
 using Microsoft.Identity.Client.OAuth2;
+using Microsoft.Identity.Client.Utils;
 
 namespace Microsoft.Identity.Client.Internal.Requests.Silent
 {
@@ -57,7 +58,7 @@ namespace Microsoft.Identity.Client.Internal.Requests.Silent
                 else if (cachedAccessTokenItem == null)
                 {
                     cacheInfoTelemetry = CacheInfoTelemetry.NoCachedAT;
-                } 
+                }
                 else
                 {
                     cacheInfoTelemetry = CacheInfoTelemetry.RefreshIn;
@@ -262,10 +263,12 @@ namespace Microsoft.Identity.Client.Internal.Requests.Silent
             var dict = new Dictionary<string, string>
             {
                 [OAuth2Parameter.GrantType] = OAuth2GrantType.RefreshToken,
-                [OAuth2Parameter.RefreshToken] = refreshTokenSecret
+                [OAuth2Parameter.RefreshToken] = refreshTokenSecret,
+                [OAuth2Parameter.Scope] = ScopeHelper.GetScopesForUserRequest(AuthenticationRequestParameters).AsSingleString(),
+
             };
 
             return dict;
-        }       
+        }
     }
 }

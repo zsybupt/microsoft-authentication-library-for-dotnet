@@ -11,6 +11,7 @@ using Microsoft.Identity.Client.TelemetryCore.Internal.Events;
 using Microsoft.Identity.Client.OAuth2;
 using Microsoft.Identity.Client.UI;
 using Microsoft.Identity.Client.Internal.Broker;
+using Microsoft.Identity.Client.Utils;
 
 namespace Microsoft.Identity.Client.Internal.Requests
 {
@@ -22,10 +23,10 @@ namespace Microsoft.Identity.Client.Internal.Requests
         private readonly string _pkceCodeVerifier;
         private readonly TokenClient _tokenClient;
 
-        public AuthCodeExchangeComponent( 
+        public AuthCodeExchangeComponent(
             AuthenticationRequestParameters requestParams,
             AcquireTokenInteractiveParameters interactiveParameters,
-            string authorizationCode, 
+            string authorizationCode,
             string pkceCodeVerifier)
         {
             _requestParams = requestParams ?? throw new ArgumentNullException(nameof(requestParams));
@@ -45,9 +46,10 @@ namespace Microsoft.Identity.Client.Internal.Requests
         private Dictionary<string, string> GetBodyParameters()
         {
             var dict = new Dictionary<string, string>
-            {
+            {                
                 [OAuth2Parameter.GrantType] = OAuth2GrantType.AuthorizationCode,
                 [OAuth2Parameter.Code] = _authorizationCode,
+                [OAuth2Parameter.Scope] = ScopeHelper.GetScopesForUserRequest(_requestParams).AsSingleString(),
                 [OAuth2Parameter.RedirectUri] = _requestParams.RedirectUri.OriginalString,
                 [OAuth2Parameter.CodeVerifier] = _pkceCodeVerifier
             };

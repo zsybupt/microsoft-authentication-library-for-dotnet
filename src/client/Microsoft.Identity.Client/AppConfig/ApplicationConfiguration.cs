@@ -123,6 +123,8 @@ namespace Microsoft.Identity.Client
         public ITokenCacheInternal AppTokenCacheInternalForTest { get; set; }
 
         public IDeviceAuthManager DeviceAuthManagerForTest { get; set; }
+
+        public HashSet<string> DefaultScopeOverride { get; internal set; }
         #endregion
 
     }

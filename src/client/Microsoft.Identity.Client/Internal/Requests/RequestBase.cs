@@ -29,6 +29,8 @@ namespace Microsoft.Identity.Client.Internal.Requests
         internal ICacheSessionManager CacheManager => AuthenticationRequestParameters.CacheSessionManager;
         protected IServiceBundle ServiceBundle { get; }
 
+        protected HashSet<string> MsalScopes { get; } 
+
         protected RequestBase(
             IServiceBundle serviceBundle,
             AuthenticationRequestParameters authenticationRequestParameters,
@@ -45,7 +47,7 @@ namespace Microsoft.Identity.Client.Internal.Requests
                 throw new ArgumentNullException(nameof(acquireTokenParameters));
             }
 
-            ValidateScopeInput(authenticationRequestParameters.Scope);
+            ValidateScopeInput(authenticationRequestParameters.Scope);            
             acquireTokenParameters.LogParameters(AuthenticationRequestParameters.RequestContext.Logger);
         }
 
@@ -79,16 +81,6 @@ namespace Microsoft.Identity.Client.Internal.Requests
             {
                 authenticationRequestParameters.RequestContext.Logger.Error("The default token cache provided by MSAL is not designed to be performant when used in confidential client applications. Please use token cache serialization. See https://aka.ms/msal-net-cca-token-cache-serialization.");
             }
-        }
-
-        /// <summary>
-        /// Return a custom set of scopes to override the default MSAL logic of merging
-        /// input scopes with reserved scopes (openid, profile etc.)
-        /// Leave as is / return null otherwise
-        /// </summary>
-        protected virtual SortedSet<string> GetOverridenScopes(ISet<string> inputScopes)
-        {
-            return null;
         }
 
         private void ValidateScopeInput(HashSet<string> scopesToValidate)
@@ -274,12 +266,12 @@ namespace Microsoft.Identity.Client.Internal.Requests
             IDictionary<string, string> additionalBodyParameters,
             CancellationToken cancellationToken)
         {
-            string scopes = GetOverridenScopes(AuthenticationRequestParameters.Scope).AsSingleString();
+            string scopes = ScopeHelper.GetScopesForUserRequest(AuthenticationRequestParameters).AsSingleString();
+
             var tokenClient = new TokenClient(AuthenticationRequestParameters);
 
             return await tokenClient.SendTokenRequestAsync(
-                additionalBodyParameters,
-                scopes,
+                additionalBodyParameters,                
                 tokenEndpoint,
                 cancellationToken)
                 .ConfigureAwait(false);

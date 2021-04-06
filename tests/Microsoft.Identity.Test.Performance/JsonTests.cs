@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using Microsoft.Identity.Client.Instance.Discovery;
@@ -84,40 +87,57 @@ namespace Microsoft.Identity.Test.Performance
             return msalTokenResponse;
         }
 
+        //[Benchmark]
+        //public string Serialize_MsalTokenResponse_Test()
+        //{
+        //    return JsonHelper.SerializeToJson<MsalTokenResponse>(_msalTokenResponse);
+        //}
+
+        //[Benchmark]
+        //public string Deserialize_MsalTokenResponse_Test()
+        //{
+        //    return JsonHelper.DeserializeFromJson<MsalTokenResponse>(_msalTokenResponseJson).CorrelationId;
+        //}
+
+        //[Benchmark]
+        //public string Serialize_InstanceDiscoveryResponse_Test()
+        //{
+        //    return JsonHelper.SerializeToJson<InstanceDiscoveryResponse>(_instanceDiscoveryResponse);
+        //}
+
+        //[Benchmark]
+        //public string Deserialize_InstanceDiscoveryResponse_Test()
+        //{
+        //    return JsonHelper.DeserializeFromJson<InstanceDiscoveryResponse>(_instanceDiscoveryResponseJson).CorrelationId;
+        //}
+
+        //[Benchmark]
+        //public string Serialize_OAuth2ResponseBase_Test()
+        //{
+        //    return JsonHelper.SerializeToJson<OAuth2ResponseBase>(_oAuth2ResponseBase);
+        //}
+
+        public const string ScopeOpenId = "openid";
+        public const string ScopeOfflineAccess = "offline_access";
+        public const string ScopeProfile = "profile";
+
+        public static readonly HashSet<string> ReservedScopes =
+                 new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ScopeOpenId, ScopeProfile, ScopeOfflineAccess };
+
+        public static readonly HashSet<string> InputScopes =
+                 new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Foo", "Bar", "openId", "Zoo" };
+
         [Benchmark]
-        public string Serialize_MsalTokenResponse_Test()
+        public string Concat()
         {
-            return JsonHelper.SerializeToJson<MsalTokenResponse>(_msalTokenResponse);
+             return (new HashSet<string>(InputScopes.Concat(OAuth2Value.ReservedScopes), StringComparer.OrdinalIgnoreCase)).AsSingleString();
         }
 
         [Benchmark]
-        public string Deserialize_MsalTokenResponse_Test()
+        public string Union()
         {
-            return JsonHelper.DeserializeFromJson<MsalTokenResponse>(_msalTokenResponseJson).CorrelationId;
+            return InputScopes.Union(OAuth2Value.ReservedScopes, StringComparer.OrdinalIgnoreCase).AsSingleString();
         }
 
-        [Benchmark]
-        public string Serialize_InstanceDiscoveryResponse_Test()
-        {
-            return JsonHelper.SerializeToJson<InstanceDiscoveryResponse>(_instanceDiscoveryResponse);
-        }
-
-        [Benchmark]
-        public string Deserialize_InstanceDiscoveryResponse_Test()
-        {
-            return JsonHelper.DeserializeFromJson<InstanceDiscoveryResponse>(_instanceDiscoveryResponseJson).CorrelationId;
-        }
-
-        [Benchmark]
-        public string Serialize_OAuth2ResponseBase_Test()
-        {
-            return JsonHelper.SerializeToJson<OAuth2ResponseBase>(_oAuth2ResponseBase);
-        }
-
-        [Benchmark]
-        public string Deserialize_OAuth2ResponseBase_Test()
-        {
-            return JsonHelper.DeserializeFromJson<OAuth2ResponseBase>(_oAuth2ResponseBaseJson).CorrelationId;
-        }
     }
 }

@@ -119,15 +119,7 @@ namespace Microsoft.Identity.Client.Internal.Requests
                 dict[OAuth2Parameter.Password] = new string(_usernamePasswordParameters.Password.PasswordToCharArray());
             }
 
-            ISet<string> unionScope = new HashSet<string>()
-            {
-                OAuth2Value.ScopeOpenId,
-                OAuth2Value.ScopeOfflineAccess,
-                OAuth2Value.ScopeProfile
-            };
-
-            unionScope.UnionWith(AuthenticationRequestParameters.Scope);
-            dict[OAuth2Parameter.Scope] = unionScope.AsSingleString();
+            dict[OAuth2Parameter.Scope] = ScopeHelper.GetScopesForUserRequest(AuthenticationRequestParameters).AsSingleString();
 
             return dict;
         }

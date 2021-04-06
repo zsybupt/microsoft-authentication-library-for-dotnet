@@ -143,8 +143,8 @@ namespace Microsoft.Identity.Client.Internal
                 throw new ArgumentException("API does not accept client id as a user-provided scope");
             }
 
-            var unionScope = ScopeHelper.GetMsalScopes(
-                new HashSet<string>(_requestParams.Scope.Concat(extraScopesToConsent)));
+            var requestScopes = ScopeHelper.GetScopesForUserRequest(_requestParams);
+            var unionScope = requestScopes.Union(extraScopesToConsent, StringComparer.OrdinalIgnoreCase);
 
             var authorizationRequestParameters = new Dictionary<string, string>
             {

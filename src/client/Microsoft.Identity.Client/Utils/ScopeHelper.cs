@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Identity.Client.Internal.Requests;
 using Microsoft.Identity.Client.OAuth2;
 
 namespace Microsoft.Identity.Client.Utils
@@ -21,11 +22,6 @@ namespace Microsoft.Identity.Client.Utils
             }
 
             return true;
-        }
-
-        public static HashSet<string> GetMsalScopes(HashSet<string> userScopes)
-        {
-            return new HashSet<string>(userScopes.Concat(OAuth2Value.ReservedScopes));
         }
 
         public static HashSet<string> ConvertStringToScopeSet(string singleString)
@@ -48,6 +44,16 @@ namespace Microsoft.Identity.Client.Utils
             }
 
             return new HashSet<string>(input, StringComparer.OrdinalIgnoreCase);
-        }    
+        }
+
+        internal static IEnumerable<string> GetScopesForUserRequest(AuthenticationRequestParameters request)
+        {
+            if (request.AppConfig.DefaultScopeOverride != null) // even if it's empty
+            {
+                return request.Scope.Union(request.AppConfig.DefaultScopeOverride, StringComparer.OrdinalIgnoreCase);
+            }
+
+            return request.Scope.Union(OAuth2Value.ReservedScopes, StringComparer.OrdinalIgnoreCase);
+        }
     }
 }

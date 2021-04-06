@@ -65,7 +65,7 @@ namespace Microsoft.Identity.Client.Platforms.Features.WamBroker
                 WebTokenRequestPromptType.ForceAuthentication :
                 WebTokenRequestPromptType.Default;
 
-            string scopes = ScopeHelper.GetMsalScopes(authenticationRequestParameters.Scope).AsSingleString();
+            string scopes = ScopeHelper.GetScopesForUserRequest(authenticationRequestParameters).AsSingleString();
             WebTokenRequest request = new WebTokenRequest(
                 provider,
                 scopes,

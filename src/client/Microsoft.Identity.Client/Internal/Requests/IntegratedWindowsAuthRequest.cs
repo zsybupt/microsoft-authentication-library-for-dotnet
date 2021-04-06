@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client.ApiConfig.Parameters;
 using Microsoft.Identity.Client.OAuth2;
+using Microsoft.Identity.Client.Utils;
 using Microsoft.Identity.Client.WsTrust;
 
 namespace Microsoft.Identity.Client.Internal.Requests
@@ -96,7 +97,7 @@ namespace Microsoft.Identity.Client.Internal.Requests
             }
         }
 
-        private static Dictionary<string, string> GetAdditionalBodyParameters(UserAssertion userAssertion)
+        private Dictionary<string, string> GetAdditionalBodyParameters(UserAssertion userAssertion)
         {
             var dict = new Dictionary<string, string>();
 
@@ -105,6 +106,7 @@ namespace Microsoft.Identity.Client.Internal.Requests
                 dict[OAuth2Parameter.GrantType] = userAssertion.AssertionType;
                 dict[OAuth2Parameter.Assertion] = Convert.ToBase64String(Encoding.UTF8.GetBytes(userAssertion.Assertion));
             }
+            dict[OAuth2Parameter.Scope] = ScopeHelper.GetScopesForUserRequest(AuthenticationRequestParameters).AsSingleString();
 
             return dict;
         }

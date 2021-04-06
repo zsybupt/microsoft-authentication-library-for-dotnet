@@ -44,16 +44,14 @@ namespace Microsoft.Identity.Client.OAuth2
         }
 
         public async Task<MsalTokenResponse> SendTokenRequestAsync(
-            IDictionary<string, string> additionalBodyParameters,
-            string scopeOverride = null,
+            IDictionary<string, string> bodyParameters,
             string tokenEndpointOverride = null,
             CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            string tokenEndpoint = tokenEndpointOverride ?? _requestParams.Endpoints.TokenEndpoint;
-            string scopes = !string.IsNullOrEmpty(scopeOverride) ? scopeOverride : GetDefaultScopes(_requestParams.Scope);
-            AddBodyParamsAndHeaders(additionalBodyParameters, scopes);
+            string tokenEndpoint = tokenEndpointOverride ?? _requestParams.Endpoints.TokenEndpoint;            
+            AddBodyParamsAndHeaders(bodyParameters);
             AddThrottlingHeader();
 
             _serviceBundle.ThrottlingManager.TryThrottle(_requestParams, _oAuth2Client.GetBodyParameters());
@@ -108,11 +106,10 @@ namespace Microsoft.Identity.Client.OAuth2
                 ThrottleCommon.ThrottleRetryAfterHeaderValue);
         }
 
-        private void AddBodyParamsAndHeaders(IDictionary<string, string> additionalBodyParameters, string scopes)
+        private void AddBodyParamsAndHeaders(IDictionary<string, string> additionalBodyParameters)
         {
             _oAuth2Client.AddBodyParameter(OAuth2Parameter.ClientId, _requestParams.AppConfig.ClientId);
             _oAuth2Client.AddBodyParameter(OAuth2Parameter.ClientInfo, "1");
-
 
             if (_requestParams.ClientCredential != null)
             {
@@ -129,8 +126,7 @@ namespace Microsoft.Identity.Client.OAuth2
                     _oAuth2Client.AddBodyParameter(entry.Key, entry.Value);
                 }
             }
-
-            _oAuth2Client.AddBodyParameter(OAuth2Parameter.Scope, scopes);
+            
             _oAuth2Client.AddBodyParameter(OAuth2Parameter.Claims, _requestParams.ClaimsAndClientCapabilities);
 
             foreach (var kvp in additionalBodyParameters)
@@ -218,19 +214,6 @@ namespace Microsoft.Identity.Client.OAuth2
             {
                 _requestInProgress = false;
             }
-        }
-
-        private static string GetDefaultScopes(ISet<string> inputScope)
-        {
-            // OAuth spec states that scopes are case sensitive, but 
-            // merge the reserved scopes in a case insensitive way, to 
-            // avoid sending things like "openid OpenId" (note that EVO is tolerant of this)
-            SortedSet<string> set = new SortedSet<string>(
-                inputScope.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-
-            set.UnionWith(OAuth2Value.ReservedScopes);
-            return set.AsSingleString();
         }
     }
 }

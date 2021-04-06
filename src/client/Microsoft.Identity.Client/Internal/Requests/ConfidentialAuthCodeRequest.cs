@@ -9,6 +9,7 @@ using Microsoft.Identity.Client.ApiConfig.Parameters;
 using Microsoft.Identity.Client.Http;
 using Microsoft.Identity.Client.TelemetryCore.Internal.Events;
 using Microsoft.Identity.Client.OAuth2;
+using Microsoft.Identity.Client.Utils;
 
 namespace Microsoft.Identity.Client.Internal.Requests
 {
@@ -44,6 +45,7 @@ namespace Microsoft.Identity.Client.Internal.Requests
             {
                 [OAuth2Parameter.GrantType] = OAuth2GrantType.AuthorizationCode,
                 [OAuth2Parameter.Code] = _authorizationCodeParameters.AuthorizationCode,
+                [OAuth2Parameter.Scope] = ScopeHelper.GetScopesForUserRequest(AuthenticationRequestParameters).AsSingleString(),
                 [OAuth2Parameter.RedirectUri] = AuthenticationRequestParameters.RedirectUri.OriginalString
             };
             return dict;

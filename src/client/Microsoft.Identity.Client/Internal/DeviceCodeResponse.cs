@@ -35,7 +35,7 @@ namespace Microsoft.Identity.Client.Internal
         [JsonProperty(PropertyName = "message")]
         public string Message { get; internal set; }
 
-        public DeviceCodeResult GetResult(string clientId, ISet<string> scopes)
+        public DeviceCodeResult GetResult(string clientId, IReadOnlyCollection<string> scopes)
         {
             // VerificationUri should be used if it's present, and if not fall back to VerificationUrl
             string verification = string.IsNullOrWhiteSpace(VerificationUri) ? VerificationUrl : VerificationUri;

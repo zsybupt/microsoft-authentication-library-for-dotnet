@@ -48,8 +48,7 @@ namespace Microsoft.Identity.Client
             bool isAdfsAuthority = requestParams.AuthorityInfo.AuthorityType == AuthorityType.Adfs;
             string preferredUsername = GetPreferredUsernameFromIdToken(isAdfsAuthority, idToken);
             string username = isAdfsAuthority ? idToken?.Upn : preferredUsername;
-            string homeAccountId = GetHomeAccountId(requestParams, response, idToken);
-            string suggestedWebCacheKey = SuggestedWebCacheKeyFactory.GetKeyFromResponse(requestParams, homeAccountId);
+            string homeAccountId = GetHomeAccountId(requestParams, response, idToken, tenantId);
 
             // Do a full instance discovery when saving tokens (if not cached),
             // so that the PreferredNetwork environment is up to date.
@@ -58,6 +57,10 @@ namespace Microsoft.Identity.Client
                                     requestParams.Authority.AuthorityInfo.CanonicalAuthority,
                                     requestParams.RequestContext)
                                 .ConfigureAwait(false);
+
+
+            string suggestedWebCacheKey = SuggestedWebCacheKeyFactory.GetKeyFromResponse(requestParams, homeAccountId);
+
 
             #region Create Cache Objects
             if (!string.IsNullOrEmpty(response.AccessToken))
@@ -180,10 +183,11 @@ namespace Microsoft.Identity.Client
 
                     UpdateAppMetadata(requestParams.AppConfig.ClientId, instanceDiscoveryMetadata.PreferredCache, response.FamilyId);
 
-                    // Do not save RT in ADAL cache for client credentials flow or B2C                        
-                    if (ServiceBundle.Config.LegacyCacheCompatibilityEnabled &&
-                        !requestParams.IsClientCredentialRequest &&
-                        requestParams.AuthorityInfo.AuthorityType != AuthorityType.B2C)
+                    // Do not save RT in ADAL cache ...
+                    if (ServiceBundle.Config.LegacyCacheCompatibilityEnabled &&  // cache migration is disabled
+                        !requestParams.IsClientCredentialRequest &&              // client creds, since only AT is present, which is not migratable
+                        homeAccountId != null &&                                 // profile & openid scopes not requested
+                        requestParams.AuthorityInfo.AuthorityType != AuthorityType.B2C) // ADAL does not support B2C
                     {
                         var tenatedAuthority = Authority.CreateAuthorityWithTenant(requestParams.AuthorityInfo, tenantId);
                         var authorityWithPreferredCache = Authority.CreateAuthorityWithEnvironment(
@@ -260,16 +264,30 @@ namespace Microsoft.Identity.Client
             return new Dictionary<string, string>();
         }
 
-        private static string GetHomeAccountId(AuthenticationRequestParameters requestParams, MsalTokenResponse response, IdToken idToken)
+        private static string GetHomeAccountId(AuthenticationRequestParameters requestParams, MsalTokenResponse response, IdToken idToken, string tenantId)
         {
-            string subject = idToken?.Subject;
-            if (idToken?.Subject != null)
-            {
-                requestParams.RequestContext.Logger.Info("Subject not present in Id token");
-            }
-
+         
             ClientInfo clientInfo = response.ClientInfo != null ? ClientInfo.CreateFromJson(response.ClientInfo) : null;
-            string homeAccountId = clientInfo?.ToAccountIdentifier() ?? subject; // ADFS does not have client info, so we use subject
+            string homeAccountId = clientInfo?.ToAccountIdentifier();
+            if (homeAccountId == null)
+            {
+                requestParams.RequestContext.Logger.Info($"No ClientInfo detected. Authority type {requestParams.AuthorityInfo.AuthorityType} ");
+
+                string subject = idToken?.Subject;
+                if (subject == null)
+                {
+                    requestParams.RequestContext.Logger.Warning($"Subject claim not detected. ");
+                    return null;
+                }
+
+                if (requestParams.AuthorityInfo.AuthorityType == AuthorityType.Aad)
+                {
+                    return $"{subject}.{tenantId}";
+                }
+
+                return subject;
+            }
+           
             return homeAccountId;
         }
 

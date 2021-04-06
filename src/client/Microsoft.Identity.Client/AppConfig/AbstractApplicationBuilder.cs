@@ -70,7 +70,7 @@ namespace Microsoft.Identity.Client
             {
                 throw new ArgumentNullException(instanceDiscoveryJson);
             }
-            
+
             try
             {
                 InstanceDiscoveryResponse instanceDiscovery = JsonHelper.DeserializeFromJson<InstanceDiscoveryResponse>(instanceDiscoveryJson);
@@ -452,6 +452,22 @@ namespace Microsoft.Identity.Client
         }
 
         /// <summary>
+        ///  Allows you to specify the default scopes sent by MSAL.NET. By default MSAL sends, 
+        ///  when relevant for the flow, the following scopes: openid profile offline_access.
+        ///  Unless you have good reasons to do this, we recommend you don't remove default scopes
+        ///  as this will lead to reduce of functionality of MSAL.NET. For instance:
+        ///  - if you remove offline_access, the access token you will acquire won't be refreshable when
+        ///   it expires
+        ///  - if you remove openid, the access token you will acquire won't be cached in most flows
+        ///   (except AcquireTokenOnBehalfOf and AcquireTokenForClient)
+        /// </summary>
+        public T WithOverrideDefaultScopes(params string[] defaultScopes)
+        {            
+            Config.DefaultScopeOverride = ScopeHelper.CreateScopeSet(defaultScopes);
+            return (T)this;
+        }
+
+        /// <summary>
         /// Generate telemetry aggregation events.
         /// </summary>
         /// <param name="telemetryConfig"></param>
@@ -480,7 +496,7 @@ namespace Microsoft.Identity.Client
             if (Config.CustomInstanceDiscoveryMetadata != null && Config.CustomInstanceDiscoveryMetadataUri != null)
             {
                 throw new MsalClientException(
-                    MsalError.CustomMetadataInstanceOrUri, 
+                    MsalError.CustomMetadataInstanceOrUri,
                     MsalErrorMessage.CustomMetadataInstanceOrUri);
             }
 
@@ -754,7 +770,7 @@ namespace Microsoft.Identity.Client
             Config.AadAuthorityAudience = authorityAudience;
             Config.ValidateAuthority = validateAuthority;
             return (T)this;
-        }       
+        }
 
         /// <summary>
         /// Adds a known Authority corresponding to an ADFS server. See https://aka.ms/msal-net-adfs
