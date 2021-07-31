@@ -8,7 +8,7 @@
   <PropertyGroup Condition="'$(TargetFramework)' == '$(TargetFrameworkUap)' ">
     <DefineConstants>$(DefineConstants);WINDOWS_APP;SUPPORTS_BROKER;SUPPORTS_CUSTOM_CACHE;IS_XAMARIN_OR_UWP</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) ">
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) Or '$(TargetFramework)' == '$(TargetFrameworkNet6Android)' ">
     <DefineConstants>$(DefineConstants);ANDROID;SUPPORTS_BROKER;IS_XAMARIN_OR_UWP</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == '$(TargetFrameworkNetDesktop45)' Or '$(TargetFramework)' == '$(TargetFrameworkNetDesktop461)' ">
