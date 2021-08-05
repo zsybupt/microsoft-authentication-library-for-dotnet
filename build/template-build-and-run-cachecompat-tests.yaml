@@ -10,15 +10,16 @@ steps:
 
 # Unit tests require .NET 3.x
 - task: UseDotNet@2
-  displayName: 'Use .Net Core SDK 3.x'
+  displayName: 'Use .NET Core SDK 3.x'
   inputs:
     version: 3.x
     
 # Use the latest .NET SDK
 - task: UseDotNet@2
-  displayName: 'Use .Net Core sdk 5.x'
+  displayName: 'Use .NET Core SDK 6.x'
   inputs:
-    version: 5.x
+    version: 6.x
+    includePreviewVersions: true
 
 # Install keyvault secrets
 - template: template-install-keyvault-secrets.yaml
