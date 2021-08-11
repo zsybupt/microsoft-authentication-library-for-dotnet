@@ -14,10 +14,9 @@ steps:
 
 # Use the latest .NET SDK
 - task: UseDotNet@2
-  displayName: 'Use .NET Core SDK 6.x'
+  displayName: 'Use .Net Core sdk 5.x'
   inputs:
-    version: 6.x
-    includePreviewVersions: true
+    version: 5.x
 
 - task: VSBuild@1
   displayName: 'NuGet restore'
