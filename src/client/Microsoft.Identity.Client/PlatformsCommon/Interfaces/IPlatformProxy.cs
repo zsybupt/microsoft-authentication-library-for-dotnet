@@ -6,6 +6,7 @@ using Microsoft.Identity.Client.AuthScheme.PoP;
 using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Cache.CacheImpl;
 using Microsoft.Identity.Client.Internal.Broker;
+using Microsoft.Identity.Client.PlatformsCommon.Shared;
 using Microsoft.Identity.Client.UI;
 
 namespace Microsoft.Identity.Client.PlatformsCommon.Interfaces
@@ -71,7 +72,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Interfaces
 
         bool LegacyCacheRequiresSerialization { get; }
 
-        ITokenCacheAccessor CreateTokenCacheAccessor(bool isApplicationTokenCache = false);
+        ITokenCacheAccessor CreateTokenCacheAccessor(TokenCacheAccessorOptions tokenCacheAccessorOptions, bool isApplicationTokenCache = false);
 
         ICacheSerializationProvider CreateTokenCacheBlobStorage();
 

@@ -393,6 +393,11 @@ namespace Microsoft.Identity.Client
                 "Failure setting process security to enable WAM Account Picker in an elevated process ({0}). For troubleshooting details, see https://aka.ms/msal-net-wam .",
                 errorCode);
 
-        public static string CcsRoutingHintMissing = "Either the userObjectIdentifier or tenantIdenifier are missing. Both are needed to create the ccs routing hint. See https://aka.ms/msal-net/ccsRouting. ";
+        public const string CcsRoutingHintMissing = "Either the userObjectIdentifier or tenantIdenifier are missing. Both are needed to create the ccs routing hint. See https://aka.ms/msal-net/ccsRouting. ";
+
+        public const string ExternalInternalCacheSerialization = 
+            "You configured MSAL cache serialization at the same time with internal caching options. These are mutually exclusive. " +
+            "Use only one option. Web site and web api scenarios should rely on external cache serialization, as internal cache serialization cannot scale. " +
+            "See https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-net-token-cache-serialization?tabs=aspnetcore  ";
     }
 }

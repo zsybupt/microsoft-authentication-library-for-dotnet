@@ -89,8 +89,8 @@ namespace Microsoft.Identity.Client
 #endif
         public void SetBeforeAccess(TokenCacheCallback beforeAccess)
         {
-            GuardOnMobilePlatforms();
-
+            Validate();
+          
             ResetDefaultDelegates();
             BeforeAccess = beforeAccess;
         }
@@ -109,7 +109,7 @@ namespace Microsoft.Identity.Client
 #endif
         public void SetAfterAccess(TokenCacheCallback afterAccess)
         {
-            GuardOnMobilePlatforms();
+            Validate();
             ResetDefaultDelegates();
             AfterAccess = afterAccess;
         }
@@ -125,7 +125,7 @@ namespace Microsoft.Identity.Client
 #endif
         public void SetBeforeWrite(TokenCacheCallback beforeWrite)
         {
-            GuardOnMobilePlatforms();
+            Validate();
             ResetDefaultDelegates();
             BeforeWrite = beforeWrite;
         }
@@ -139,7 +139,7 @@ namespace Microsoft.Identity.Client
 #endif
         public void SetBeforeAccessAsync(Func<TokenCacheNotificationArgs, Task> beforeAccess)
         {
-            GuardOnMobilePlatforms();
+            Validate();
             ResetDefaultDelegates();
             AsyncBeforeAccess = beforeAccess;
         }
@@ -153,7 +153,7 @@ namespace Microsoft.Identity.Client
 #endif
         public void SetAfterAccessAsync(Func<TokenCacheNotificationArgs, Task> afterAccess)
         {
-            GuardOnMobilePlatforms();
+            Validate();
             ResetDefaultDelegates();
             AsyncAfterAccess = afterAccess;
         }
@@ -167,13 +167,20 @@ namespace Microsoft.Identity.Client
 #endif
         public void SetBeforeWriteAsync(Func<TokenCacheNotificationArgs, Task> beforeWrite)
         {
-            GuardOnMobilePlatforms();
+            Validate();
             ResetDefaultDelegates();
             AsyncBeforeWrite = beforeWrite;
         }
 
-        private static void GuardOnMobilePlatforms()
+        private void Validate()
         {
+            if (ServiceBundle.Config.TokenCacheAccessorOptions != null)
+            {
+                throw new MsalClientException(
+                    MsalError.ExternalInternalCacheSerialization,
+                    MsalErrorMessage.ExternalInternalCacheSerialization);
+            }
+
 #if !SUPPORTS_CUSTOM_CACHE
         throw new PlatformNotSupportedException("You should not use these TokenCache methods on mobile platforms. " +
             "They are meant to allow applications to define their own storage strategy on .net desktop and non-mobile platforms such as .net core. " +

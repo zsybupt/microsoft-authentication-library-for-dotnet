@@ -1004,5 +1004,12 @@ namespace Microsoft.Identity.Client
         /// <para>Mitigation</para>For troubleshooting details, see https://aka.ms/msal-net-wam .
         /// </summary>
         public const string InitializeProcessSecurityError = "initialize_process_security_error";
+
+        /// <summary>
+        /// <para>What happens?</para>You configured MSAL cache serialization at the same time with <see cref="AbstractApplicationBuilder{T}.WithMemoryTokenCacheOptions(bool)"/>
+        /// These are mutually exclusive.
+        /// <para>Mitigation</para> Use only one option. Web site and web api scenarios should rely on external cache serialization, as internal cache serialization cannot scale. See https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-net-token-cache-serialization?tabs=aspnetcore        
+        /// </summary>
+        public const string ExternalInternalCacheSerialization = "externa_internal_cache_serialization";
     }
 }
