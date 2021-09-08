@@ -13,7 +13,6 @@ using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.Internal.Requests;
 using Microsoft.Identity.Client.PlatformsCommon.Factories;
 using Microsoft.Identity.Client.PlatformsCommon.Interfaces;
-using Microsoft.Identity.Client.PlatformsCommon.Shared;
 using Microsoft.Identity.Client.Utils;
 
 namespace Microsoft.Identity.Client
@@ -74,7 +73,7 @@ namespace Microsoft.Identity.Client
             _semaphoreSlim = new OptionalSemaphoreSlim(useRealSemaphore: serviceBundle.Config.CacheSynchronizationEnabled);
 
             var proxy = serviceBundle?.PlatformProxy ?? PlatformProxyFactory.CreatePlatformProxy(null);
-            _accessor = isApplicationTokenCache ? new InMemoryPartitionedTokenCacheAccessor(serviceBundle?.ApplicationLogger) : proxy.CreateTokenCacheAccessor();
+            _accessor = proxy.CreateTokenCacheAccessor(isApplicationTokenCache);
             _featureFlags = proxy.GetFeatureFlags();
 
             _usesDefaultSerialization = optionalDefaultSerializer != null;

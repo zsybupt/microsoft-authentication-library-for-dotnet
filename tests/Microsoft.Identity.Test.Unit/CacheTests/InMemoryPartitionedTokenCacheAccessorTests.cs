@@ -15,7 +15,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         [TestMethod]
         public void SaveAccessToken_Test()
         {
-            var accessor = new InMemoryPartitionedTokenCacheAccessor(new NullLogger());
+            var accessor = new InMemoryPartitionedAppTokenCacheAccessor(new NullLogger());
             var at1 = CreateAccessTokenItem("tenant1", "scope1");
 
             // Act: Saves with new tenant and scope
@@ -49,7 +49,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         [TestMethod]
         public void GetAccessToken_Test()
         {
-            var accessor = new InMemoryPartitionedTokenCacheAccessor(new NullLogger());
+            var accessor = new InMemoryPartitionedAppTokenCacheAccessor(new NullLogger());
             var at1 = CreateAccessTokenItem("tenant1", "scope1");
             var at2 = CreateAccessTokenItem("tenant1", "scope2");
             var at3 = CreateAccessTokenItem("tenant2", "scope1");
@@ -73,7 +73,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         [TestMethod]
         public void DeleteAccessToken_Test()
         {
-            var accessor = new InMemoryPartitionedTokenCacheAccessor(new NullLogger());
+            var accessor = new InMemoryPartitionedAppTokenCacheAccessor(new NullLogger());
             var at1 = CreateAccessTokenItem("tenant1", "scope1");
             var at2 = CreateAccessTokenItem("tenant1", "scope2");
             var at3 = CreateAccessTokenItem("tenant2", "scope1");
@@ -102,7 +102,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         [TestMethod]
         public void GetAllAccessTokens_Test()
         {
-            var accessor = new InMemoryPartitionedTokenCacheAccessor(new NullLogger());
+            var accessor = new InMemoryPartitionedAppTokenCacheAccessor(new NullLogger());
             var at1 = CreateAccessTokenItem("tenant1", "scope1");
             var at2 = CreateAccessTokenItem("tenant1", "scope2");
             var at3 = CreateAccessTokenItem("tenant2", "scope1");
@@ -124,7 +124,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         [TestMethod]
         public void ClearCache_Test()
         {
-            var accessor = new InMemoryPartitionedTokenCacheAccessor(new NullLogger());
+            var accessor = new InMemoryPartitionedAppTokenCacheAccessor(new NullLogger());
             accessor.SaveAccessToken(CreateAccessTokenItem());
 
             Assert.AreEqual(1, accessor.AccessTokenCacheDictionary.Count);
