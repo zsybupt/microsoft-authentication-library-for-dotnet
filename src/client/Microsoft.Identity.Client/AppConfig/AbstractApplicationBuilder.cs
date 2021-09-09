@@ -193,20 +193,17 @@ namespace Microsoft.Identity.Client
         /// Detailed guidance for each application type and platform:
         /// https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-net-token-cache-serialization?tabs=aspnetcore
         /// </summary>
-        /// <param name="useStaticCache">Share the static cache between all ClientApplication objects. Defaults to false.</param>
-        /// <remarks>The legacy ADAL library used a static cache by default.</remarks>
+        /// <param name="options">Options for the internal MSAL token caches. </param>
 #if !SUPPORTS_CUSTOM_CACHE || WINDOWS_APP
         [EditorBrowsable(EditorBrowsableState.Never)]
 #endif
-        public T WithMemoryTokenCacheOptions(bool useStaticCache)
+        public T WithMemoryTokenCacheOptions(MemoryTokenCacheOptions options)
         {
-            // TODO: expose on options
 #if !SUPPORTS_CUSTOM_CACHE || WINDOWS_APP
             throw new PlatformNotSupportedException("WithInteralTokenCacheOptions is supported only on platforms where MSAL stores tokens in memory and not on mobile platforms or UWP.");
 #else
 
-            Config.TokenCacheAccessorOptions = new PlatformsCommon.Shared.TokenCacheAccessorOptions() { 
-                UseStatic = true };
+            Config.TokenCacheAccessorOptions = options;
             return (T)this;
 #endif
         }

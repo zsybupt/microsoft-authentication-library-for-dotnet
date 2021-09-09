@@ -15,7 +15,6 @@ using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.Internal.Broker;
 using Microsoft.Identity.Client.Kerberos;
 using Microsoft.Identity.Client.PlatformsCommon.Interfaces;
-using Microsoft.Identity.Client.PlatformsCommon.Shared;
 using Microsoft.Identity.Client.UI;
 
 namespace Microsoft.Identity.Client
@@ -69,7 +68,7 @@ namespace Microsoft.Identity.Client
 
         public IPlatformProxy PlatformProxy { get; internal set; }
 
-        public TokenCacheAccessorOptions TokenCacheAccessorOptions { get; set; }
+        public MemoryTokenCacheOptions TokenCacheAccessorOptions { get; set; }
 
         public AuthorityInfo AuthorityInfo { get; internal set; }
         public string ClientId { get; internal set; }
