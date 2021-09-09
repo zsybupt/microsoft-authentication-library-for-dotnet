@@ -197,7 +197,7 @@ namespace Microsoft.Identity.Client
 #if !SUPPORTS_CUSTOM_CACHE || WINDOWS_APP
         [EditorBrowsable(EditorBrowsableState.Never)]
 #endif
-        public T WithMemoryTokenCacheOptions(MemoryTokenCacheOptions options)
+        public T WithInternalMemoryTokenCacheOptions(InternalMemoryTokenCacheOptions options)
         {
 #if !SUPPORTS_CUSTOM_CACHE || WINDOWS_APP
             throw new PlatformNotSupportedException("WithInteralTokenCacheOptions is supported only on platforms where MSAL stores tokens in memory and not on mobile platforms or UWP.");

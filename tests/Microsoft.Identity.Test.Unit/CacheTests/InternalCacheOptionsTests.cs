@@ -23,7 +23,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
             var app =
                     ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
                                                               .WithClientSecret(TestConstants.ClientSecret)
-                                                              .WithMemoryTokenCacheOptions(new MemoryTokenCacheOptions() { UseSharedCache = true })
+                                                              .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true })
                                                               .Build();
 
             var ex = AssertException.Throws<MsalClientException>(() => app.UserTokenCache.SetAfterAccess((n) => { }));
@@ -52,13 +52,13 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
                     ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
                                                               .WithClientSecret(TestConstants.ClientSecret)
                                                               .WithHttpManager(httpManager)
-                                                              .WithMemoryTokenCacheOptions(new MemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                                                              .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
 
                 ConfidentialClientApplication app2 =
                    ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
                                                              .WithClientSecret(TestConstants.ClientSecret)
                                                              .WithHttpManager(httpManager)
-                                                              .WithMemoryTokenCacheOptions(new MemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                                                              .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
 
                 ConfidentialClientApplication app_withoutStaticCache =
                   ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
@@ -80,7 +80,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
                      ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
                                                                .WithClientSecret(TestConstants.ClientSecret)
                                                                .WithHttpManager(httpManager)
-                                                              .WithMemoryTokenCacheOptions(new MemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                                                              .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
 
                 await ClientCredsAssertTokenSourceAsync(app3, "S1", TokenSource.Cache).ConfigureAwait(false);
                 await ClientCredsAssertTokenSourceAsync(app3, "S2", TokenSource.Cache).ConfigureAwait(false);
@@ -105,7 +105,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
                     .Create(TestConstants.ClientId)
                     .WithAuthority(new Uri(ClientApplicationBase.DefaultAuthority), true)
                     .WithHttpManager(harness.HttpManager)
-                    .WithMemoryTokenCacheOptions(new MemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                    .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
 
                 app1.ServiceBundle.ConfigureMockWebUI();
 
@@ -125,7 +125,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
                    .Create(TestConstants.ClientId)
                    .WithAuthority(new Uri(ClientApplicationBase.DefaultAuthority), true)
                    .WithHttpManager(harness.HttpManager)
-                   .WithMemoryTokenCacheOptions(new MemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                   .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
 
                 accounts = await app2.GetAccountsAsync().ConfigureAwait(false);
                 Assert.AreEqual(1, accounts.Count());
