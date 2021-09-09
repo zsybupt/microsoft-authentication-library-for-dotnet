@@ -13,6 +13,7 @@ using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.Internal.Requests;
 using Microsoft.Identity.Client.PlatformsCommon.Factories;
 using Microsoft.Identity.Client.PlatformsCommon.Interfaces;
+using Microsoft.Identity.Client.TelemetryCore.Internal.Events;
 using Microsoft.Identity.Client.Utils;
 
 namespace Microsoft.Identity.Client
@@ -136,7 +137,8 @@ namespace Microsoft.Identity.Client
             requestParams.RequestContext.Logger.Info("Looking for scopes for the authority in the cache which intersect with " +
                       requestParams.Scope.AsSingleString());
             IList<MsalAccessTokenCacheItem> accessTokenItemList = new List<MsalAccessTokenCacheItem>();
-            foreach (var accessToken in _accessor.GetAllAccessTokens(tenantId))
+            string partitionKey = requestParams.ApiId == ApiEvent.ApiIds.AcquireTokenForClient ? requestParams.Authority.TenantId : requestParams.Account.HomeAccountId.Identifier;
+            foreach (var accessToken in _accessor.GetAllAccessTokens(partitionKey))
             {
                 if (accessToken.ClientId.Equals(ClientId, StringComparison.OrdinalIgnoreCase) &&
                     environmentAliases.Contains(accessToken.Environment) &&
@@ -241,9 +243,9 @@ namespace Microsoft.Identity.Client
                 : refreshTokens;
         }
 
-        private IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokensWithNoLocks(bool filterByClientId, string optionalTenantIdFilter = null)
+        private IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokensWithNoLocks(bool filterByClientId, string optionalPartitionKey = null)
         {
-            var accessTokens = _accessor.GetAllAccessTokens(optionalTenantIdFilter);
+            var accessTokens = _accessor.GetAllAccessTokens(optionalPartitionKey);
             return filterByClientId
                 ? accessTokens.Where(x => x.ClientId.Equals(ClientId, StringComparison.OrdinalIgnoreCase)).ToList()
                 : accessTokens;
