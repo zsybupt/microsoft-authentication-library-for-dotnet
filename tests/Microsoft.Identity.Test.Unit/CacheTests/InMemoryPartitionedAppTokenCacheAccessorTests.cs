@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Identity.Test.Unit.CacheTests
 {
     [TestClass]
-    public class InMemoryPartitionedTokenCacheAccessorTests
+    public class InMemoryPartitionedAppTokenCacheAccessorTests
     {
         [TestMethod]
         public void SaveAccessToken_Test()
@@ -23,7 +23,8 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
             Assert.AreEqual(1, accessor.GetAllAccessTokens().Count);
             Assert.AreEqual(1, accessor.AccessTokenCacheDictionary.Count);
-            Assert.IsNotNull(accessor.AccessTokenCacheDictionary["tenant1"][at1.GetKey().ToString()]);
+            string partitionKey1 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant1");
+            Assert.IsNotNull(accessor.AccessTokenCacheDictionary[partitionKey1][at1.GetKey().ToString()]);
 
             var at2 = CreateAccessTokenItem("tenant1", "scope2");
 
@@ -32,7 +33,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
             Assert.AreEqual(2, accessor.GetAllAccessTokens().Count);
             Assert.AreEqual(1, accessor.AccessTokenCacheDictionary.Count);
-            Assert.IsNotNull(accessor.AccessTokenCacheDictionary["tenant1"][at2.GetKey().ToString()]);
+            Assert.IsNotNull(accessor.AccessTokenCacheDictionary[partitionKey1][at2.GetKey().ToString()]);
 
             var at3 = CreateAccessTokenItem("tenant2", "scope1");
 
@@ -43,7 +44,9 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
             Assert.AreEqual(3, accessor.GetAllAccessTokens().Count);
             Assert.AreEqual(2, accessor.AccessTokenCacheDictionary.Count);
-            Assert.IsNotNull(accessor.AccessTokenCacheDictionary["tenant2"][at3.GetKey().ToString()]);
+            string partitionKey2 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant2");
+
+            Assert.IsNotNull(accessor.AccessTokenCacheDictionary[partitionKey2][at3.GetKey().ToString()]);
         }
 
         [TestMethod]
@@ -117,8 +120,10 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
             // Act: Get all tokens and get all tokens by tenant
             Assert.AreEqual(3, accessor.GetAllAccessTokens().Count);
-            Assert.AreEqual(2, accessor.GetAllAccessTokens("tenant1").Count);
-            Assert.AreEqual(1, accessor.GetAllAccessTokens("tenant2").Count);
+            string partitionKey_tenant1 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant1");
+            string partitionKey_tenant2 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant2");
+            Assert.AreEqual(2, accessor.GetAllAccessTokens(partitionKey_tenant1).Count);
+            Assert.AreEqual(1, accessor.GetAllAccessTokens(partitionKey_tenant2).Count);
         }
 
         [TestMethod]

@@ -46,16 +46,21 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         public void SaveAccessToken(MsalAccessTokenCacheItem item)
         {
             string itemKey = item.GetKey().ToString();
-            // if a conflict occurs, pick the latest value
+            
+            string partitionKey = !string.IsNullOrEmpty(item.UserAssertionHash) ?
+                item.UserAssertionHash : item.HomeAccountId;
+
             AccessTokenCacheDictionary
-                .GetOrAdd(item.UserAssertionHash ?? item.HomeAccountId, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item;
+                .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item; // if a conflict occurs, pick the latest value
         }
 
         public void SaveRefreshToken(MsalRefreshTokenCacheItem item)
         {
             string itemKey = item.GetKey().ToString();
+            string partitionKey = !string.IsNullOrEmpty(item.UserAssertionHash) ?
+              item.UserAssertionHash : item.HomeAccountId;
             RefreshTokenCacheDictionary
-                .GetOrAdd(item.UserAssertionHash ?? item.HomeAccountId, new ConcurrentDictionary<string, MsalRefreshTokenCacheItem>())[itemKey] = item;
+                .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalRefreshTokenCacheItem>())[itemKey] = item;
         }
 
         public void SaveIdToken(MsalIdTokenCacheItem item)
