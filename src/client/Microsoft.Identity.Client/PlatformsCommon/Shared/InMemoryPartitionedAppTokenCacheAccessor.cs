@@ -30,10 +30,11 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #region Add
         public void SaveAccessToken(MsalAccessTokenCacheItem item)
         {
+            var partitionKey = SuggestedWebCacheKeyFactory.GetClientCredentialKey(item.ClientId, item.TenantId);
             string itemKey = item.GetKey().ToString();
             // if a conflict occurs, pick the latest value
             AccessTokenCacheDictionary
-                .GetOrAdd(item.TenantId, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item;
+                .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item;
         }
 
         public void SaveRefreshToken(MsalRefreshTokenCacheItem item)
@@ -58,7 +59,9 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #region Get
         public MsalAccessTokenCacheItem GetAccessToken(MsalAccessTokenCacheKey accessTokenKey)
         {
-            AccessTokenCacheDictionary.TryGetValue(accessTokenKey.TenantId, out ConcurrentDictionary<string, MsalAccessTokenCacheItem> partition);
+            var partitionKey = SuggestedWebCacheKeyFactory.GetClientCredentialKey(accessTokenKey.ClientId, accessTokenKey.TenantId);
+
+            AccessTokenCacheDictionary.TryGetValue(partitionKey, out ConcurrentDictionary<string, MsalAccessTokenCacheItem> partition);
             MsalAccessTokenCacheItem cacheItem = null;
             partition?.TryGetValue(accessTokenKey.ToString(), out cacheItem);
             return cacheItem;
@@ -89,7 +92,9 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #region Delete
         public void DeleteAccessToken(MsalAccessTokenCacheKey cacheKey)
         {
-            AccessTokenCacheDictionary.TryGetValue(cacheKey.TenantId, out ConcurrentDictionary<string, MsalAccessTokenCacheItem> partition);
+            var partitionKey = SuggestedWebCacheKeyFactory.GetClientCredentialKey(cacheKey.ClientId, cacheKey.TenantId);
+
+            AccessTokenCacheDictionary.TryGetValue(partitionKey, out ConcurrentDictionary<string, MsalAccessTokenCacheItem> partition);
             if (partition == null || !partition.TryRemove(cacheKey.ToString(), out _))
             {
                 _logger.InfoPii(

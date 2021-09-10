@@ -13,7 +13,6 @@ using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.Internal.Requests;
 using Microsoft.Identity.Client.PlatformsCommon.Factories;
 using Microsoft.Identity.Client.PlatformsCommon.Interfaces;
-using Microsoft.Identity.Client.TelemetryCore.Internal.Events;
 using Microsoft.Identity.Client.Utils;
 
 namespace Microsoft.Identity.Client
@@ -137,7 +136,8 @@ namespace Microsoft.Identity.Client
             requestParams.RequestContext.Logger.Info("Looking for scopes for the authority in the cache which intersect with " +
                       requestParams.Scope.AsSingleString());
             IList<MsalAccessTokenCacheItem> accessTokenItemList = new List<MsalAccessTokenCacheItem>();
-            string partitionKey = requestParams.ApiId == ApiEvent.ApiIds.AcquireTokenForClient ? requestParams.Authority.TenantId : requestParams.Account.HomeAccountId.Identifier;
+            string partitionKey = SuggestedWebCacheKeyFactory.GetKeyFromRequest(requestParams);
+
             foreach (var accessToken in _accessor.GetAllAccessTokens(partitionKey))
             {
                 if (accessToken.ClientId.Equals(ClientId, StringComparison.OrdinalIgnoreCase) &&
@@ -235,25 +235,25 @@ namespace Microsoft.Identity.Client
             return accounts;
         }
 
-        private IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokensWithNoLocks(bool filterByClientId)
+        private IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokensWithNoLocks(bool filterByClientId, string partitionKey)
         {
-            var refreshTokens = _accessor.GetAllRefreshTokens();
+            var refreshTokens = _accessor.GetAllRefreshTokens(partitionKey);
             return filterByClientId
                 ? refreshTokens.Where(x => x.ClientId.Equals(ClientId, StringComparison.OrdinalIgnoreCase)).ToList()
                 : refreshTokens;
         }
 
-        private IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokensWithNoLocks(bool filterByClientId, string optionalPartitionKey = null)
+        private IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokensWithNoLocks(bool filterByClientId, string partitionKey)
         {
-            var accessTokens = _accessor.GetAllAccessTokens(optionalPartitionKey);
+            var accessTokens = _accessor.GetAllAccessTokens(partitionKey);
             return filterByClientId
                 ? accessTokens.Where(x => x.ClientId.Equals(ClientId, StringComparison.OrdinalIgnoreCase)).ToList()
                 : accessTokens;
         }
 
-        private IReadOnlyList<MsalIdTokenCacheItem> GetAllIdTokensWithNoLocks(bool filterByClientId)
+        private IReadOnlyList<MsalIdTokenCacheItem> GetAllIdTokensWithNoLocks(bool filterByClientId, string partitionKey)
         {
-            var idTokens = _accessor.GetAllIdTokens();
+            var idTokens = _accessor.GetAllIdTokens(partitionKey);
             return filterByClientId
                 ? idTokens.Where(x => x.ClientId.Equals(ClientId, StringComparison.OrdinalIgnoreCase)).ToList()
                 : idTokens;

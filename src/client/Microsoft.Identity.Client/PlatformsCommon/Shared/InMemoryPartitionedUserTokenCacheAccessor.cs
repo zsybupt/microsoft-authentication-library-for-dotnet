@@ -42,14 +42,14 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             string itemKey = item.GetKey().ToString();
             // if a conflict occurs, pick the latest value
             AccessTokenCacheDictionary
-                .GetOrAdd(item.HomeAccountId, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item;
+                .GetOrAdd(item.UserAssertionHash ?? item.HomeAccountId, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item;
         }
 
         public void SaveRefreshToken(MsalRefreshTokenCacheItem item)
         {
             string itemKey = item.GetKey().ToString();
             RefreshTokenCacheDictionary
-                .GetOrAdd(item.HomeAccountId, new ConcurrentDictionary<string, MsalRefreshTokenCacheItem>())[itemKey] = item;
+                .GetOrAdd(item.UserAssertionHash ?? item.HomeAccountId, new ConcurrentDictionary<string, MsalRefreshTokenCacheItem>())[itemKey] = item;
         }
 
         public void SaveIdToken(MsalIdTokenCacheItem item)
