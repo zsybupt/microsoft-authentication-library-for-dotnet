@@ -138,5 +138,8 @@ namespace Microsoft.Identity.Client.Platforms.iOS
         {
             return new IosHttpClientFactory();
         }
+
+        public bool LegacyCacheRequiresSerialization => false;
+
     }
 }
