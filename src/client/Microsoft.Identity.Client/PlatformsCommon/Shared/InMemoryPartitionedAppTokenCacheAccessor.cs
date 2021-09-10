@@ -11,6 +11,12 @@ using Microsoft.Identity.Client.Core;
 
 namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 {
+    /// <summary>
+    /// Stores tokens for an application.
+    /// Partitions the access token collection by a key of client ID with tenant ID.
+    /// App metadata collection is not partitioned.
+    /// Refresh token, ID token, and account related methods are no-op.
+    /// </summary>
     internal class InMemoryPartitionedAppTokenCacheAccessor : ITokenCacheAccessor
     {
         // perf: do not use ConcurrentDictionary.Values as it takes a lock

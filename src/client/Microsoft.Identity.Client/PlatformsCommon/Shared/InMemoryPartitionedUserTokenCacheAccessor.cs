@@ -11,6 +11,12 @@ using Microsoft.Identity.Client.Core;
 
 namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 {
+    /// <summary>
+    /// Stores tokens for users.
+    /// Partitions the access and refresh token collections by a user assertion hash in case of OBO and by home account ID otherwise.
+    /// Partitions the ID token and account collections by home account ID.
+    /// App metadata collection is not partitioned.
+    /// </summary>
     internal class InMemoryPartitionedUserTokenCacheAccessor : ITokenCacheAccessor
     {
         // perf: do not use ConcurrentDictionary.Values as it takes a lock
