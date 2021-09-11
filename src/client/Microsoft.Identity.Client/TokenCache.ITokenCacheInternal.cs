@@ -812,11 +812,8 @@ namespace Microsoft.Identity.Client
             bool filterByClientId = !_featureFlags.IsFociEnabled;
             bool isAadAuthority = requestParameters.AuthorityInfo.AuthorityType == AuthorityType.Aad;
 
-            // this will either be the home account id or null, it can never be obo assertion or tenant id
-            string partitionkey = SuggestedWebCacheKeyFactory.GetKeyFromRequest(requestParameters);
-
-            IReadOnlyList<MsalRefreshTokenCacheItem> rtCacheItems = GetAllRefreshTokensWithNoLocks(filterByClientId, partitionkey);
-            IReadOnlyList<MsalAccountCacheItem> accountCacheItems = _accessor.GetAllAccounts(partitionkey);
+            IReadOnlyList<MsalRefreshTokenCacheItem> rtCacheItems = GetAllRefreshTokensWithNoLocks(filterByClientId);
+            IReadOnlyList<MsalAccountCacheItem> accountCacheItems = _accessor.GetAllAccounts();
 
             if (logger.IsLoggingEnabled(LogLevel.Verbose))
                 logger.Verbose($"GetAccounts found {rtCacheItems.Count} RTs and {accountCacheItems.Count} accounts in MSAL cache. ");
@@ -1008,7 +1005,6 @@ namespace Microsoft.Identity.Client
                 requestParameters.RequestContext.Logger.Info("Removing user from cache..");
 
                 ITokenCacheInternal tokenCacheInternal = this;
-                var partitionKey = account.HomeAccountId.Identifier;
 
                 try
                 {

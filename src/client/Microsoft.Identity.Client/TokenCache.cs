@@ -194,7 +194,7 @@ namespace Microsoft.Identity.Client
 
 
 
-        private IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokensWithNoLocks(bool filterByClientId, string partitionKey)
+        private IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokensWithNoLocks(bool filterByClientId, string partitionKey = null)
         {
             var refreshTokens = _accessor.GetAllRefreshTokens(partitionKey);
             return filterByClientId
