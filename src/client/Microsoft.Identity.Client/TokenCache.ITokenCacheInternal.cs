@@ -153,7 +153,7 @@ namespace Microsoft.Identity.Client
                             account,
                             hasStateChanged: true,
                             tokenCacheInternal.IsApplicationCache,
-                            hasTokens: tokenCacheInternal.HasTokensNoLocks(suggestedWebCacheKey),
+                            hasTokens: tokenCacheInternal.HasTokensNoLocks(),
                             requestParams.RequestContext.UserCancellationToken,
                             suggestedCacheKey: suggestedWebCacheKey);
 
@@ -215,7 +215,7 @@ namespace Microsoft.Identity.Client
                             account,
                             hasStateChanged: true,
                             tokenCacheInternal.IsApplicationCache,
-                            tokenCacheInternal.HasTokensNoLocks(suggestedWebCacheKey),
+                            tokenCacheInternal.HasTokensNoLocks(),
                             requestParams.RequestContext.UserCancellationToken,
                             suggestedCacheKey: suggestedWebCacheKey,
                             suggestedCacheExpiry: cacheExpiry);
@@ -528,7 +528,7 @@ namespace Microsoft.Identity.Client
             if (msalAccessTokenCacheItem != null)
             {
 
-                if (msalAccessTokenCacheItem.ExpiresOn > DateTime.UtcNow + AccessTokenExpirationBuffer)
+                if (msalAccessTokenCacheItem.ExpiresOn > DateTime.UtcNow + Constants.AccessTokenExpirationBuffer)
                 {
                     // due to https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/issues/1806
                     if (msalAccessTokenCacheItem.ExpiresOn > DateTime.UtcNow + TimeSpan.FromDays(ExpirationTooLongInDays))
@@ -550,7 +550,7 @@ namespace Microsoft.Identity.Client
                 }
 
                 if (ServiceBundle.Config.IsExtendedTokenLifetimeEnabled &&
-                    msalAccessTokenCacheItem.ExtendedExpiresOn > DateTime.UtcNow + AccessTokenExpirationBuffer)
+                    msalAccessTokenCacheItem.ExtendedExpiresOn > DateTime.UtcNow + Constants.AccessTokenExpirationBuffer)
                 {
                     if (logger.IsLoggingEnabled(LogLevel.Info))
                     {
@@ -1020,7 +1020,7 @@ namespace Microsoft.Identity.Client
                             account,
                             true,
                             tokenCacheInternal.IsApplicationCache,
-                            tokenCacheInternal.HasTokensNoLocks(partitionKey),
+                            tokenCacheInternal.HasTokensNoLocks(),
                             requestParameters.RequestContext.UserCancellationToken,
                             account.HomeAccountId.Identifier);
 
@@ -1049,7 +1049,7 @@ namespace Microsoft.Identity.Client
                             account,
                             true,
                             tokenCacheInternal.IsApplicationCache,
-                            hasTokens: tokenCacheInternal.HasTokensNoLocks(partitionKey),
+                            hasTokens: tokenCacheInternal.HasTokensNoLocks(),
                             requestParameters.RequestContext.UserCancellationToken,
                             account.HomeAccountId.Identifier);
 
@@ -1067,15 +1067,9 @@ namespace Microsoft.Identity.Client
             }
         }
 
-        bool ITokenCacheInternal.HasTokensNoLocks(string partitionKey)
+        bool ITokenCacheInternal.HasTokensNoLocks()
         {
-            return _accessor.GetAllRefreshTokens(partitionKey).Count > 0 ||
-                _accessor.GetAllAccessTokens(partitionKey).Any(at => !IsAtExpired(at));
-        }
-
-        private bool IsAtExpired(MsalAccessTokenCacheItem at)
-        {
-            return at.ExpiresOn < DateTime.UtcNow + AccessTokenExpirationBuffer;
+            return _accessor.HasAccessOrRefreshTokens();
         }
 
         internal /* internal for test only */ void RemoveAccountInternal(IAccount account, RequestContext requestContext)

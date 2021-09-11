@@ -162,6 +162,17 @@ namespace Microsoft.Identity.Client.Platforms.Android
             return MsalAccountCacheItem.FromJsonString(_accountSharedPreference.GetString(accountKey.ToString(), null));
         }
 
+        public bool HasAccessOrRefreshTokens()
+        {
+            return _refreshTokenSharedPreference.All.Count > 0 ||
+                _accessTokenSharedPreference.All.Values.Cast<string>().Any(token => !IsAtExpired(MsalAccessTokenCacheItem.FromJsonString(token)));
+        }
+
+        private bool IsAtExpired(MsalAccessTokenCacheItem at)
+        {
+            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
+        }
+
         #region App Metadata - not used on Android
         public MsalAppMetadataCacheItem ReadAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
         {

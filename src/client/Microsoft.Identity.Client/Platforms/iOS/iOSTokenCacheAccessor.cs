@@ -340,6 +340,18 @@ namespace Microsoft.Identity.Client.Platforms.iOS
             return MsalAccountCacheItem.FromJsonString(GetPayload(accountKey));
         }
 
+        public bool HasAccessOrRefreshTokens()
+        {
+            return GetPayloadAsString((int)MsalCacheKeys.iOSCredentialAttrType.RefreshToken).Count > 0 ||
+                GetPayloadAsString((int)MsalCacheKeys.iOSCredentialAttrType.AccessToken)
+                .Any(token => !IsAtExpired(MsalAccessTokenCacheItem.FromJsonString(token)));
+        }
+
+        private bool IsAtExpired(MsalAccessTokenCacheItem at)
+        {
+            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
+        }
+
         #region AppMetatada - not implemented on iOS
         public MsalAppMetadataCacheItem ReadAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
         {

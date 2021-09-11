@@ -131,7 +131,7 @@ namespace Microsoft.Identity.Client.Cache
                                        _requestParams.Account,
                                        hasStateChanged: false,
                                        TokenCacheInternal.IsApplicationCache,
-                                       hasTokens: TokenCacheInternal.HasTokensNoLocks(key),
+                                       hasTokens: TokenCacheInternal.HasTokensNoLocks(),
                                        _requestParams.RequestContext.UserCancellationToken,
                                        suggestedCacheKey: key);
 
@@ -147,7 +147,7 @@ namespace Microsoft.Identity.Client.Cache
                                        _requestParams.Account,
                                        hasStateChanged: false,
                                        TokenCacheInternal.IsApplicationCache,
-                                       hasTokens: TokenCacheInternal.HasTokensNoLocks(key),
+                                       hasTokens: TokenCacheInternal.HasTokensNoLocks(),
                                        _requestParams.RequestContext.UserCancellationToken,
                                        suggestedCacheKey: key);
 

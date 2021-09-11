@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Cache.Items;
 using Microsoft.Identity.Client.Cache.Keys;
-using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.Internal.Requests;
 using Microsoft.Identity.Client.OAuth2;
 using Microsoft.Identity.Client.Utils;
@@ -50,7 +49,6 @@ namespace Microsoft.Identity.Client
 
         void SetIosKeychainSecurityGroup(string securityGroup);
 
-
         #region Cache notifications
         Task OnAfterAccessAsync(TokenCacheNotificationArgs args);
         Task OnBeforeAccessAsync(TokenCacheNotificationArgs args);
@@ -62,8 +60,7 @@ namespace Microsoft.Identity.Client
         /// Shows if MSAL's in-memory token cache has any kind of RT or non-expired AT. Does not trigger a cache notification.
         /// Ignores ADAL's cache.
         /// </summary>
-        bool HasTokensNoLocks(string partitionKey);
-
+        bool HasTokensNoLocks();
 
         /// <summary>
         /// True when MSAL has been configured to fire the serialization events. This can be done by the app developer or by MSAL itself (on UWP)

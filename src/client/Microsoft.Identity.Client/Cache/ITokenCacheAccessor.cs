@@ -80,5 +80,8 @@ namespace Microsoft.Identity.Client.Cache
 #endif
 
         void Clear();
+
+        bool HasAccessOrRefreshTokens();
+
     }
 }

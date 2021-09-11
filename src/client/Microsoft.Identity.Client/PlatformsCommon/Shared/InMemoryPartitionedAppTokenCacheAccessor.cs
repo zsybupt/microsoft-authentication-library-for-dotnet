@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -167,6 +168,16 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         {
             AccessTokenCacheDictionary.Clear();
             // app metadata isn't removable
+        }
+
+        public bool HasAccessOrRefreshTokens()
+        {
+            return AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !IsAtExpired(token.Value)));
+        }
+
+        private bool IsAtExpired(MsalAccessTokenCacheItem at)
+        {
+            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
         }
     }
 }
