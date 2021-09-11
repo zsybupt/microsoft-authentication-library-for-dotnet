@@ -202,7 +202,7 @@ namespace Microsoft.Identity.Client
                 : refreshTokens;
         }
 
-        private IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokensWithNoLocks(bool filterByClientId, string partitionKey)
+        private IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokensWithNoLocks(bool filterByClientId, string partitionKey = null)
         {
             var accessTokens = _accessor.GetAllAccessTokens(partitionKey);
             return filterByClientId

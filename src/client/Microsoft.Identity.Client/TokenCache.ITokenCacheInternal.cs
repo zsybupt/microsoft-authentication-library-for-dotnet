@@ -204,9 +204,9 @@ namespace Microsoft.Identity.Client
                     {
                         DateTimeOffset? cacheExpiry = null;
 
-                        if (!_accessor.GetAllRefreshTokens(suggestedWebCacheKey).Any())
+                        if (!_accessor.GetAllRefreshTokens().Any())
                         {
-                            cacheExpiry = CalculateSuggestedCacheExpiry(suggestedWebCacheKey);
+                            cacheExpiry = CalculateSuggestedCacheExpiry();
                         }
 
                         var args = new TokenCacheNotificationArgs(
@@ -297,9 +297,9 @@ namespace Microsoft.Identity.Client
             }
         }
 
-        private DateTimeOffset CalculateSuggestedCacheExpiry(string partitionKey)
+        private DateTimeOffset CalculateSuggestedCacheExpiry()
         {
-            IEnumerable<MsalAccessTokenCacheItem> tokenCacheItems = GetAllAccessTokensWithNoLocks(true, partitionKey);
+            IEnumerable<MsalAccessTokenCacheItem> tokenCacheItems = GetAllAccessTokensWithNoLocks(true);
             var unixCacheExpiry = tokenCacheItems.Max(item => item.ExpiresOnUnixTimestamp);
             return (DateTimeOffset)CoreHelpers.UnixTimestampStringToDateTime(unixCacheExpiry);
         }
