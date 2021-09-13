@@ -28,7 +28,7 @@ namespace Microsoft.Identity.Client
             MsalTokenResponse response);
 
         Task<MsalAccessTokenCacheItem> FindAccessTokenAsync(AuthenticationRequestParameters requestParams);
-        MsalIdTokenCacheItem GetIdTokenCacheItem(MsalIdTokenCacheKey msalIdTokenCacheKey);
+        MsalIdTokenCacheItem GetIdTokenCacheItem(MsalAccessTokenCacheItem msalAccessTokenCacheItem);
 
         /// <summary>
         /// Returns a RT for the request. If familyId is specified, it tries to return the FRT.

@@ -53,7 +53,7 @@ namespace Microsoft.Identity.Client
             string preferredUsername = GetPreferredUsernameFromIdToken(isAdfsAuthority, idToken);
             string username = isAdfsAuthority ? idToken?.Upn : preferredUsername;
             string homeAccountId = GetHomeAccountId(requestParams, response, idToken);
-            string suggestedWebCacheKey = SuggestedWebCacheKeyFactory.GetKeyFromResponse(requestParams, homeAccountId);
+            string suggestedWebCacheKey = CacheKeyFactory.GetKeyFromResponse(requestParams, homeAccountId);
 
             // Do a full instance discovery when saving tokens (if not cached),
             // so that the PreferredNetwork environment is up to date.
@@ -388,7 +388,7 @@ namespace Microsoft.Identity.Client
 
             // take a snapshot of the access tokens to avoid problems where the underlying collection is changed,
             // as this method is NOT locked by the semaphore
-            string partitionKey = SuggestedWebCacheKeyFactory.GetKeyFromRequest(requestParams);
+            string partitionKey = CacheKeyFactory.GetKeyFromRequest(requestParams);
             IReadOnlyList<MsalAccessTokenCacheItem> tokenCacheItems = GetAllAccessTokensWithNoLocks(true, partitionKey);
             if (tokenCacheItems.Count == 0)
             {
@@ -671,7 +671,7 @@ namespace Microsoft.Identity.Client
             if (requestParams.Authority == null)
                 return null;
 
-            IReadOnlyList<MsalRefreshTokenCacheItem> allRts = _accessor.GetAllRefreshTokens(SuggestedWebCacheKeyFactory.GetKeyFromRequest(requestParams));
+            IReadOnlyList<MsalRefreshTokenCacheItem> allRts = _accessor.GetAllRefreshTokens(CacheKeyFactory.GetKeyFromRequest(requestParams));
             if (allRts.Count != 0)
             {
                 var metadata =
@@ -953,9 +953,9 @@ namespace Microsoft.Identity.Client
             }
         }
 
-        MsalIdTokenCacheItem ITokenCacheInternal.GetIdTokenCacheItem(MsalIdTokenCacheKey msalIdTokenCacheKey)
+        MsalIdTokenCacheItem ITokenCacheInternal.GetIdTokenCacheItem(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
         {
-            var idToken = _accessor.GetIdToken(msalIdTokenCacheKey);
+            var idToken = _accessor.GetIdToken(msalAccessTokenCacheItem);
             return idToken;
         }
 
@@ -1093,7 +1093,7 @@ namespace Microsoft.Identity.Client
 
             foreach (MsalRefreshTokenCacheItem refreshTokenCacheItem in refreshTokensToDelete)
             {
-                _accessor.DeleteRefreshToken(refreshTokenCacheItem.GetKey());
+                _accessor.DeleteRefreshToken(refreshTokenCacheItem);
             }
 
             requestContext.Logger.Info("Deleted refresh token count - " + allRefreshTokens.Count);
@@ -1102,7 +1102,7 @@ namespace Microsoft.Identity.Client
                 .ToList();
             foreach (MsalAccessTokenCacheItem accessTokenCacheItem in allAccessTokens)
             {
-                _accessor.DeleteAccessToken(accessTokenCacheItem.GetKey());
+                _accessor.DeleteAccessToken(accessTokenCacheItem);
             }
 
             requestContext.Logger.Info("Deleted access token count - " + allAccessTokens.Count);
@@ -1112,7 +1112,7 @@ namespace Microsoft.Identity.Client
                 .ToList();
             foreach (MsalIdTokenCacheItem idTokenCacheItem in allIdTokens)
             {
-                _accessor.DeleteIdToken(idTokenCacheItem.GetKey());
+                _accessor.DeleteIdToken(idTokenCacheItem);
             }
 
             requestContext.Logger.Info("Deleted Id token count - " + allIdTokens.Count);
@@ -1121,7 +1121,7 @@ namespace Microsoft.Identity.Client
                 .Where(item => item.HomeAccountId.Equals(account.HomeAccountId.Identifier, StringComparison.OrdinalIgnoreCase) &&
                                item.PreferredUsername.Equals(account.Username, StringComparison.OrdinalIgnoreCase))
                 .ToList()
-                .ForEach(accItem => _accessor.DeleteAccount(accItem.GetKey()));
+                .ForEach(accItem => _accessor.DeleteAccount(accItem));
         }
     }
 }

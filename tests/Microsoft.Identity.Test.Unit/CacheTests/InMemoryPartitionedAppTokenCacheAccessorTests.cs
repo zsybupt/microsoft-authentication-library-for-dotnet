@@ -23,7 +23,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
             Assert.AreEqual(1, accessor.GetAllAccessTokens().Count);
             Assert.AreEqual(1, accessor.AccessTokenCacheDictionary.Count);
-            string partitionKey1 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant1");
+            string partitionKey1 = CacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant1");
             Assert.IsNotNull(accessor.AccessTokenCacheDictionary[partitionKey1][at1.GetKey().ToString()]);
 
             var at2 = CreateAccessTokenItem("tenant1", "scope2");
@@ -44,34 +44,10 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
             Assert.AreEqual(3, accessor.GetAllAccessTokens().Count);
             Assert.AreEqual(2, accessor.AccessTokenCacheDictionary.Count);
-            string partitionKey2 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant2");
+            string partitionKey2 = CacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant2");
 
             Assert.IsNotNull(accessor.AccessTokenCacheDictionary[partitionKey2][at3.GetKey().ToString()]);
-        }
-
-        [TestMethod]
-        public void GetAccessToken_Test()
-        {
-            var accessor = new InMemoryPartitionedAppTokenCacheAccessor(new NullLogger());
-            var at1 = CreateAccessTokenItem("tenant1", "scope1");
-            var at2 = CreateAccessTokenItem("tenant1", "scope2");
-            var at3 = CreateAccessTokenItem("tenant2", "scope1");
-
-            // Act: Returns null from empty collection
-            var result = accessor.GetAccessToken(at1.GetKey());
-
-            Assert.IsNull(result);
-
-            accessor.SaveAccessToken(at1);
-            accessor.SaveAccessToken(at2);
-            accessor.SaveAccessToken(at3);
-
-            // Act
-            result = accessor.GetAccessToken(at1.GetKey());
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(at1.GetKey(), result.GetKey());
-        }
+        }       
 
         [TestMethod]
         public void DeleteAccessToken_Test()
@@ -82,23 +58,17 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
             var at3 = CreateAccessTokenItem("tenant2", "scope1");
 
             // Act: Delete on empty collection doesn't throw
-            accessor.DeleteAccessToken(at1.GetKey());
+            accessor.DeleteAccessToken(at1);
 
             accessor.SaveAccessToken(at1);
             accessor.SaveAccessToken(at2);
             accessor.SaveAccessToken(at3);
 
-            var result = accessor.GetAccessToken(at1.GetKey());
-
-            Assert.IsNotNull(result);
             Assert.AreEqual(3, accessor.GetAllAccessTokens().Count);
 
             // Act
-            accessor.DeleteAccessToken(at1.GetKey());
+            accessor.DeleteAccessToken(at1);
 
-            result = accessor.GetAccessToken(at1.GetKey());
-
-            Assert.IsNull(result);
             Assert.AreEqual(2, accessor.GetAllAccessTokens().Count);
         }
 
@@ -120,8 +90,8 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
             // Act: Get all tokens and get all tokens by tenant
             Assert.AreEqual(3, accessor.GetAllAccessTokens().Count);
-            string partitionKey_tenant1 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant1");
-            string partitionKey_tenant2 = SuggestedWebCacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant2");
+            string partitionKey_tenant1 = CacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant1");
+            string partitionKey_tenant2 = CacheKeyFactory.GetClientCredentialKey(TestConstants.ClientId, "tenant2");
             Assert.AreEqual(2, accessor.GetAllAccessTokens(partitionKey_tenant1).Count);
             Assert.AreEqual(1, accessor.GetAllAccessTokens(partitionKey_tenant2).Count);
         }

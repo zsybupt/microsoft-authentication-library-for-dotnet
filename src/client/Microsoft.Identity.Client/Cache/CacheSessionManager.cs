@@ -58,10 +58,10 @@ namespace Microsoft.Identity.Client.Cache
             return await TokenCacheInternal.GetTenantProfilesAsync(_requestParams, homeAccountId).ConfigureAwait(false);
         }
 
-        public async Task<MsalIdTokenCacheItem> GetIdTokenCacheItemAsync(MsalIdTokenCacheKey idTokenCacheKey)
+        public async Task<MsalIdTokenCacheItem> GetIdTokenCacheItemAsync(MsalAccessTokenCacheItem accessTokenCacheItem)
         {
             await RefreshCacheForReadOperationsAsync(CacheEvent.TokenTypes.ID).ConfigureAwait(false);
-            return TokenCacheInternal.GetIdTokenCacheItem(idTokenCacheKey);
+            return TokenCacheInternal.GetIdTokenCacheItem(accessTokenCacheItem);
         }
 
         public async Task<MsalRefreshTokenCacheItem> FindFamilyRefreshTokenAsync(string familyId)
@@ -121,7 +121,7 @@ namespace Microsoft.Identity.Client.Cache
                         {
                             using (_requestParams.RequestContext.CreateTelemetryHelper(cacheEvent))
                             {
-                                string key = SuggestedWebCacheKeyFactory.GetKeyFromRequest(_requestParams);
+                                string key = CacheKeyFactory.GetKeyFromRequest(_requestParams);
 
                                 try
                                 {

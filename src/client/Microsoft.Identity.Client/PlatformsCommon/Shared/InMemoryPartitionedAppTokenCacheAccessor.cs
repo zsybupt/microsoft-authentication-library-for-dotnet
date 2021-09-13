@@ -37,7 +37,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #region Add
         public void SaveAccessToken(MsalAccessTokenCacheItem item)
         {
-            var partitionKey = SuggestedWebCacheKeyFactory.GetClientCredentialKey(item.ClientId, item.TenantId);
+            var partitionKey = CacheKeyFactory.GetClientCredentialKey(item.ClientId, item.TenantId);
             string itemKey = item.GetKey().ToString();
             // if a conflict occurs, pick the latest value
             AccessTokenCacheDictionary
@@ -63,26 +63,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         }
         #endregion
 
-        #region Get
-        public MsalAccessTokenCacheItem GetAccessToken(MsalAccessTokenCacheKey accessTokenKey)
-        {
-            var partitionKey = SuggestedWebCacheKeyFactory.GetClientCredentialKey(accessTokenKey.ClientId, accessTokenKey.TenantId);
-
-            AccessTokenCacheDictionary.TryGetValue(partitionKey, out ConcurrentDictionary<string, MsalAccessTokenCacheItem> partition);
-            MsalAccessTokenCacheItem cacheItem = null;
-            partition?.TryGetValue(accessTokenKey.ToString(), out cacheItem);
-            return cacheItem;
-        }
-
-        public MsalRefreshTokenCacheItem GetRefreshToken(MsalRefreshTokenCacheKey refreshTokenKey)
-        {
-            return null;
-        }
-
-        public MsalIdTokenCacheItem GetIdToken(MsalIdTokenCacheKey idTokenKey)
-        {
-            return null;
-        }
+        #region Get            
 
         public MsalAccountCacheItem GetAccount(MsalAccountCacheKey accountKey)
         {
@@ -97,30 +78,34 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #endregion
 
         #region Delete
-        public void DeleteAccessToken(MsalAccessTokenCacheKey cacheKey)
+        public void DeleteAccessToken(MsalAccessTokenCacheItem item)
         {
-            var partitionKey = SuggestedWebCacheKeyFactory.GetClientCredentialKey(cacheKey.ClientId, cacheKey.TenantId);
+            var partitionKey = CacheKeyFactory.GetClientCredentialKey(item.ClientId, item.TenantId);
 
-            AccessTokenCacheDictionary.TryGetValue(partitionKey, out ConcurrentDictionary<string, MsalAccessTokenCacheItem> partition);
-            if (partition == null || !partition.TryRemove(cacheKey.ToString(), out _))
+            AccessTokenCacheDictionary.TryGetValue(partitionKey, out var partition);
+            if (partition == null || !partition.TryRemove(item.GetKey().ToString(), out _))
             {
                 _logger.InfoPii(
-                    $"Cannot delete access token because it was not found in the cache. Key {cacheKey}.",
+                    $"Cannot delete access token because it was not found in the cache. Key {item.GetKey()}.",
                     "Cannot delete access token because it was not found in the cache.");
             }
         }
 
-        public void DeleteRefreshToken(MsalRefreshTokenCacheKey cacheKey)
+        public void DeleteRefreshToken(MsalRefreshTokenCacheItem item)
         {
+            throw new NotImplementedException();
         }
 
-        public void DeleteIdToken(MsalIdTokenCacheKey cacheKey)
+        public void DeleteIdToken(MsalIdTokenCacheItem item)
         {
+            throw new NotImplementedException();
         }
 
-        public void DeleteAccount(MsalAccountCacheKey cacheKey)
+        public void DeleteAccount(MsalAccountCacheItem item)
         {
+            throw new NotImplementedException();
         }
+
 
         #endregion
 
@@ -179,5 +164,12 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         {
             return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
         }
+
+        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
+        {
+            return null; 
+        }
+
+       
     }
 }

@@ -49,7 +49,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
 
             // Act
-            var actualKey = SuggestedWebCacheKeyFactory.GetKeyFromRequest(parameters);
+            var actualKey = CacheKeyFactory.GetKeyFromRequest(parameters);
 
             // Assert
             Assert.IsNotNull(actualKey);
@@ -79,7 +79,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
 
             // Act
-            var actualKey = SuggestedWebCacheKeyFactory.GetKeyFromRequest(parameters);
+            var actualKey = CacheKeyFactory.GetKeyFromRequest(parameters);
 
             // Assert
             Assert.IsNotNull(actualKey);
@@ -112,7 +112,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
             };
 
             // Act
-            var actualKey = SuggestedWebCacheKeyFactory.GetKeyFromRequest(parameters);
+            var actualKey = CacheKeyFactory.GetKeyFromRequest(parameters);
 
             // Assert
             Assert.IsNotNull(actualKey);
@@ -131,17 +131,17 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
             var idt = accessor.GetAllIdTokens().First();
             var acc = accessor.GetAllAccounts().First();
 
-            Assert.AreEqual(at.HomeAccountId, SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(at));
-            Assert.AreEqual(rt.HomeAccountId, SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(rt));
-            Assert.AreEqual(idt.HomeAccountId, SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(idt));
-            Assert.AreEqual(acc.HomeAccountId, SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(acc));
+            Assert.AreEqual(at.HomeAccountId, CacheKeyFactory.GetKeyFromCachedItem(at));
+            Assert.AreEqual(rt.HomeAccountId, CacheKeyFactory.GetKeyFromCachedItem(rt));
+            Assert.AreEqual(idt.HomeAccountId, CacheKeyFactory.GetKeyFromCachedItem(idt));
+            Assert.AreEqual(acc.HomeAccountId, CacheKeyFactory.GetKeyFromCachedItem(acc));
 
             at.UserAssertionHash = "at_hash";
             rt.UserAssertionHash = "rt_hash";
-            Assert.AreEqual("at_hash", SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(at));
-            Assert.AreEqual("rt_hash", SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(rt));
-            Assert.AreEqual(idt.HomeAccountId, SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(idt));
-            Assert.AreEqual(acc.HomeAccountId, SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(acc));
+            Assert.AreEqual("at_hash", CacheKeyFactory.GetKeyFromCachedItem(at));
+            Assert.AreEqual("rt_hash", CacheKeyFactory.GetKeyFromCachedItem(rt));
+            Assert.AreEqual(idt.HomeAccountId, CacheKeyFactory.GetKeyFromCachedItem(idt));
+            Assert.AreEqual(acc.HomeAccountId, CacheKeyFactory.GetKeyFromCachedItem(acc));
         }
     }
 }

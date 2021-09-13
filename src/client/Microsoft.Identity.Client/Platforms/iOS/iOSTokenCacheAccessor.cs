@@ -98,26 +98,30 @@ namespace Microsoft.Identity.Client.Platforms.iOS
             Save(item.GetKey(), item.ToJsonString());
         }
 
-        public void DeleteAccessToken(MsalAccessTokenCacheKey cacheKey)
+        #region DeleteItem
+        public void DeleteAccessToken(MsalAccessTokenCacheItem item)
         {
-            Remove(cacheKey);
+            Remove(item.GetKey());
         }
 
-        public void DeleteRefreshToken(MsalRefreshTokenCacheKey cacheKey)
+        public void DeleteRefreshToken(MsalRefreshTokenCacheItem item)
         {
-            Remove(cacheKey);
+            Remove(item.GetKey());
         }
 
-        public void DeleteIdToken(MsalIdTokenCacheKey cacheKey)
+        public void DeleteIdToken(MsalIdTokenCacheItem item)
         {
-            Remove(cacheKey);
+            Remove(item.GetKey());
         }
 
-        public void DeleteAccount(MsalAccountCacheKey cacheKey)
+        public void DeleteAccount(MsalAccountCacheItem item)
         {
-            Remove(cacheKey);
+            Remove(item.GetKey());
         }
 
+        #endregion
+
+        #region GetAllItems
         public IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokens(string optionalPartitionKey = null)
         {
             return GetPayloadAsString((int)MsalCacheKeys.iOSCredentialAttrType.AccessToken)
@@ -145,6 +149,7 @@ namespace Microsoft.Identity.Client.Platforms.iOS
                 .Select(x => MsalAccountCacheItem.FromJsonString(x))
                 .ToList();
         }
+        #endregion
 
         internal SecStatusCode TryGetBrokerApplicationToken(string clientId, out string appToken)
         {
@@ -319,19 +324,10 @@ namespace Microsoft.Identity.Client.Platforms.iOS
 
             RemoveByType(MsalCacheKeys.iOSAuthorityTypeToAttrType[CacheAuthorityType.MSSTS.ToString()]);
         }
-
-        public MsalAccessTokenCacheItem GetAccessToken(MsalAccessTokenCacheKey accessTokenKey)
+       
+        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
         {
-            return MsalAccessTokenCacheItem.FromJsonString(GetPayload(accessTokenKey));
-        }
-
-        public MsalRefreshTokenCacheItem GetRefreshToken(MsalRefreshTokenCacheKey refreshTokenKey)
-        {
-            return MsalRefreshTokenCacheItem.FromJsonString(GetPayload(refreshTokenKey));
-        }
-
-        public MsalIdTokenCacheItem GetIdToken(MsalIdTokenCacheKey idTokenKey)
-        {
+            var idTokenKey = accessTokenCacheItem.GetIdTokenItemKey();
             return MsalIdTokenCacheItem.FromJsonString(GetPayload(idTokenKey));
         }
 
@@ -352,6 +348,7 @@ namespace Microsoft.Identity.Client.Platforms.iOS
             return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
         }
 
+   
         #region AppMetatada - not implemented on iOS
         public MsalAppMetadataCacheItem ReadAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
         {
@@ -379,6 +376,8 @@ namespace Microsoft.Identity.Client.Platforms.iOS
         {
             throw new NotImplementedException();
         }
+
+       
         #endregion
     }
 }

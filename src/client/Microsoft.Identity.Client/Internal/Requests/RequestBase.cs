@@ -380,7 +380,7 @@ namespace Microsoft.Identity.Client.Internal.Requests
             {
                 logger.Info("Returning existing access token. It is not expired, but should be refreshed. ");
 
-                var idToken = await CacheManager.GetIdTokenCacheItemAsync(cachedAccessTokenItem.GetIdTokenItemKey()).ConfigureAwait(false);
+                var idToken = await CacheManager.GetIdTokenCacheItemAsync(cachedAccessTokenItem).ConfigureAwait(false);
                 var tenantProfiles = await CacheManager.GetTenantProfilesAsync(cachedAccessTokenItem.HomeAccountId).ConfigureAwait(false);
 
                 return new AuthenticationResult(

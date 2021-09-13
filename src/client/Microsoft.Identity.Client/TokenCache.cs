@@ -139,7 +139,7 @@ namespace Microsoft.Identity.Client
                 requestParams.Scope.AsSingleString());
 
             IList<MsalAccessTokenCacheItem> accessTokenItemList = new List<MsalAccessTokenCacheItem>();
-            string partitionKey = SuggestedWebCacheKeyFactory.GetKeyFromRequest(requestParams);
+            string partitionKey = CacheKeyFactory.GetKeyFromRequest(requestParams);
 
             foreach (var accessToken in _accessor.GetAllAccessTokens(partitionKey))
             {
@@ -168,7 +168,7 @@ namespace Microsoft.Identity.Client
 
             foreach (var cacheItem in accessTokenItemList)
             {
-                _accessor.DeleteAccessToken(cacheItem.GetKey());
+                _accessor.DeleteAccessToken(cacheItem);
             }
         }
 
