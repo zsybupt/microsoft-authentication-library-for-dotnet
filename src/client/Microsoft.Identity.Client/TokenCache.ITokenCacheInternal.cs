@@ -145,7 +145,7 @@ namespace Microsoft.Identity.Client
 
                 try
                 {
-                    if (tokenCacheInternal.IsExternalSerializationEnabled())
+                    if (tokenCacheInternal.IsAppSubscribedToSerializationEvents())
                     {
                         var args = new TokenCacheNotificationArgs(
                             this,
@@ -200,7 +200,7 @@ namespace Microsoft.Identity.Client
                 }
                 finally
                 {
-                    if (tokenCacheInternal.IsExternalSerializationEnabled())
+                    if (tokenCacheInternal.IsAppSubscribedToSerializationEvents())
                     {
                         DateTimeOffset? cacheExpiry = null;
 
@@ -247,7 +247,7 @@ namespace Microsoft.Identity.Client
             }
 
             if (ServiceBundle.PlatformProxy.LegacyCacheRequiresSerialization &&
-               !(this as ITokenCacheInternal).IsExternalSerializationConfigured())
+               !(this as ITokenCacheInternal).IsExternalSerializationConfiguredByUser())
             {
                 // serialization is not configured but is required
                 return false;
@@ -1008,7 +1008,7 @@ namespace Microsoft.Identity.Client
 
                 try
                 {
-                    if (tokenCacheInternal.IsExternalSerializationEnabled())
+                    if (tokenCacheInternal.IsAppSubscribedToSerializationEvents())
                     {
                         var args = new TokenCacheNotificationArgs(
                             this,
@@ -1037,7 +1037,7 @@ namespace Microsoft.Identity.Client
                 }
                 finally
                 {
-                    if (tokenCacheInternal.IsExternalSerializationEnabled())
+                    if (tokenCacheInternal.IsAppSubscribedToSerializationEvents())
                     {
                         var afterAccessArgs = new TokenCacheNotificationArgs(
                             this,

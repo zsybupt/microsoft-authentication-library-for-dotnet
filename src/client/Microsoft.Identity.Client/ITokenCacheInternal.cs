@@ -65,12 +65,12 @@ namespace Microsoft.Identity.Client
         /// <summary>
         /// True when MSAL has been configured to fire the serialization events. This can be done by the app developer or by MSAL itself (on UWP)
         /// </summary>
-        bool IsExternalSerializationEnabled();
+        bool IsAppSubscribedToSerializationEvents();
 
         /// <summary>
         /// True when MSAL has been configured by the app developer to fire serialization events.
         /// </summary>
-        bool IsExternalSerializationConfigured();
+        bool IsExternalSerializationConfiguredByUser();
 
         #endregion
     }

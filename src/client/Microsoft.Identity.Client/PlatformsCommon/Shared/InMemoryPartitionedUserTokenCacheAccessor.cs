@@ -48,8 +48,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         {
             string itemKey = item.GetKey().ToString();
 
-            string partitionKey = !string.IsNullOrEmpty(item.UserAssertionHash) ?
-                item.UserAssertionHash : item.HomeAccountId;
+            string partitionKey = SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(item);
 
             AccessTokenCacheDictionary
                 .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item; // if a conflict occurs, pick the latest value
@@ -58,8 +57,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         public void SaveRefreshToken(MsalRefreshTokenCacheItem item)
         {
             string itemKey = item.GetKey().ToString();
-            string partitionKey = !string.IsNullOrEmpty(item.UserAssertionHash) ?
-              item.UserAssertionHash : item.HomeAccountId;
+            string partitionKey = SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(item);
             RefreshTokenCacheDictionary
                 .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalRefreshTokenCacheItem>())[itemKey] = item;
         }
@@ -67,15 +65,19 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         public void SaveIdToken(MsalIdTokenCacheItem item)
         {
             string itemKey = item.GetKey().ToString();
+            string partitionKey = SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(item);
+
             IdTokenCacheDictionary
-                .GetOrAdd(item.HomeAccountId, new ConcurrentDictionary<string, MsalIdTokenCacheItem>())[itemKey] = item;
+                .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalIdTokenCacheItem>())[itemKey] = item;
         }
 
         public void SaveAccount(MsalAccountCacheItem item)
         {
             string itemKey = item.GetKey().ToString();
+            string partitionKey = SuggestedWebCacheKeyFactory.GetKeyFromCachedItem(item);
+
             AccountCacheDictionary
-                .GetOrAdd(item.HomeAccountId, new ConcurrentDictionary<string, MsalAccountCacheItem>())[itemKey] = item;
+                .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalAccountCacheItem>())[itemKey] = item;
         }
 
         public void SaveAppMetadata(MsalAppMetadataCacheItem item)
