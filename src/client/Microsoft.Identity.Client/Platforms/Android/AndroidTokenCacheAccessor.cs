@@ -38,9 +38,9 @@ namespace Microsoft.Identity.Client.Platforms.Android
             _accountSharedPreference = Application.Context.GetSharedPreferences(AccountSharedPreferenceName,
                 FileCreationMode.Private);
 
-            if (_accessTokenSharedPreference == null || 
-                _refreshTokenSharedPreference == null || 
-                _idTokenSharedPreference == null || 
+            if (_accessTokenSharedPreference == null ||
+                _refreshTokenSharedPreference == null ||
+                _idTokenSharedPreference == null ||
                 _accountSharedPreference == null)
             {
                 throw new MsalClientException(
@@ -85,7 +85,6 @@ namespace Microsoft.Identity.Client.Platforms.Android
         #endregion
 
         #region DeleteItem
-
         public void DeleteAccessToken(MsalAccessTokenCacheItem item)
         {
             Delete(item.GetKey().ToString(), _accessTokenSharedPreference.Edit());
@@ -131,6 +130,14 @@ namespace Microsoft.Identity.Client.Platforms.Android
 
         #endregion
 
+        #region GetItem
+        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
+        {
+            return MsalIdTokenCacheItem.FromJsonString(
+                _idTokenSharedPreference.GetString(accessTokenCacheItem.GetIdTokenItemKey().ToString(), null));
+        }
+        #endregion
+
         #region GetAll
         public IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokens(string optionalPartitionKey = null)
         {
@@ -158,23 +165,14 @@ namespace Microsoft.Identity.Client.Platforms.Android
             return MsalAccountCacheItem.FromJsonString(_accountSharedPreference.GetString(accountKey.ToString(), null));
         }
 
+        /// <summary>
+        /// This method is used during token cache serialization which is not supported for Android.
+        /// </summary>
         public bool HasAccessOrRefreshTokens()
         {
-            return _refreshTokenSharedPreference.All.Count > 0 ||
-                _accessTokenSharedPreference.All.Values.Cast<string>().Any(token => !IsAtExpired(MsalAccessTokenCacheItem.FromJsonString(token)));
+            throw new NotSupportedException();
         }
 
-        private bool IsAtExpired(MsalAccessTokenCacheItem at)
-        {
-            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
-        }
-
-        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
-        {
-            return MsalIdTokenCacheItem.FromJsonString(
-                _idTokenSharedPreference.GetString(accessTokenCacheItem.GetIdTokenItemKey().ToString(), null));
-        }
-      
         #region App Metadata - not used on Android
         public MsalAppMetadataCacheItem ReadAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
         {
@@ -200,10 +198,6 @@ namespace Microsoft.Identity.Client.Platforms.Android
         {
             throw new NotImplementedException();
         }
-
-
         #endregion
-
-      
     }
 }

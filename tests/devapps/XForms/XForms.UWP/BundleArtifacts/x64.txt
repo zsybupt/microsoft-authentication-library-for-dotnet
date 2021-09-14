@@ -1,2 +1,0 @@
-MainPackage=c:\g\msal\tests\devapps\XForms\XForms.UWP\bin\x64\Debug\XForms.UWP_1.0.0.0_x64_Debug.msix
-SymbolPackage=c:\g\msal\tests\devapps\XForms\XForms.UWP\obj\x64\Debug\Symbols\XForms.UWP_1.0.0.0_x64_Debug.appxsym

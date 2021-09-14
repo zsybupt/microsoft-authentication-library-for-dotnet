@@ -44,16 +44,31 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
                 .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item;
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
         public void SaveRefreshToken(MsalRefreshTokenCacheItem item)
         {
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
         public void SaveIdToken(MsalIdTokenCacheItem item)
         {
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
         public void SaveAccount(MsalAccountCacheItem item)
         {
+            throw new NotSupportedException();
         }
 
         public void SaveAppMetadata(MsalAppMetadataCacheItem item)
@@ -63,11 +78,23 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         }
         #endregion
 
-        #region Get            
+        #region Get
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
+        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
+        {
+            throw new NotSupportedException();
+        }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
         public MsalAccountCacheItem GetAccount(MsalAccountCacheKey accountKey)
         {
-            return null;
+            throw new NotSupportedException();
         }
 
         public MsalAppMetadataCacheItem GetAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
@@ -91,22 +118,32 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             }
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
         public void DeleteRefreshToken(MsalRefreshTokenCacheItem item)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
         public void DeleteIdToken(MsalIdTokenCacheItem item)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// </summary>
         public void DeleteAccount(MsalAccountCacheItem item)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
-
-
         #endregion
 
         #region Get All
@@ -146,7 +183,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         public void SetiOSKeychainSecurityGroup(string keychainSecurityGroup)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public virtual void Clear()
@@ -157,19 +194,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         public bool HasAccessOrRefreshTokens()
         {
-            return AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !IsAtExpired(token.Value)));
+            return AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !token.Value.IsExpired()));
         }
-
-        private bool IsAtExpired(MsalAccessTokenCacheItem at)
-        {
-            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
-        }
-
-        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
-        {
-            return null; 
-        }
-
-       
     }
 }

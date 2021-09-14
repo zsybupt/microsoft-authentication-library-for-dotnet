@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Cache.Items;
-using Microsoft.Identity.Client.Cache.Keys;
 using Microsoft.Identity.Client.Internal.Requests;
 using Microsoft.Identity.Client.OAuth2;
 using Microsoft.Identity.Client.Utils;
@@ -63,12 +62,12 @@ namespace Microsoft.Identity.Client
         bool HasTokensNoLocks();
 
         /// <summary>
-        /// True when MSAL has been configured to fire the serialization events. This can be done by the app developer or by MSAL itself (on UWP)
+        /// True when MSAL has been configured to fire the serialization events. This can be done by the app developer or by MSAL itself (on UWP).
         /// </summary>
         bool IsAppSubscribedToSerializationEvents();
 
         /// <summary>
-        /// True when MSAL has been configured by the app developer to fire serialization events.
+        /// True when the app developer subscribed to token cache serialization events.
         /// </summary>
         bool IsExternalSerializationConfiguredByUser();
 

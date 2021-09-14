@@ -105,7 +105,6 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             return null;
         }
 
-
         public MsalAccountCacheItem GetAccount(MsalAccountCacheKey accountKey)
         {
             string partitionKey = CacheKeyFactory.GetKeyFromAccount(accountKey);
@@ -239,7 +238,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         public void SetiOSKeychainSecurityGroup(string keychainSecurityGroup)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public virtual void Clear()
@@ -254,12 +253,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         public bool HasAccessOrRefreshTokens()
         {
             return RefreshTokenCacheDictionary.Any(partition => partition.Value.Count > 0) ||
-                    AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !IsAtExpired(token.Value)));
-        }
-
-        private bool IsAtExpired(MsalAccessTokenCacheItem at)
-        {
-            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
+                    AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !token.Value.IsExpired()));
         }
     }
 }
