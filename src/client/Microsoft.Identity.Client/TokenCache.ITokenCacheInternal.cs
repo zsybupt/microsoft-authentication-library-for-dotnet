@@ -170,6 +170,7 @@ namespace Microsoft.Identity.Client
 
                         DeleteAccessTokensWithIntersectingScopes(
                             requestParams,
+                            suggestedWebCacheKey,
                             instanceDiscoveryMetadata.Aliases,
                             tenantId,
                             msalAccessTokenCacheItem.ScopeSet,
@@ -389,6 +390,8 @@ namespace Microsoft.Identity.Client
             // take a snapshot of the access tokens to avoid problems where the underlying collection is changed,
             // as this method is NOT locked by the semaphore
             string partitionKey = CacheKeyFactory.GetKeyFromRequest(requestParams);
+            Debug.Assert(partitionKey != null || !requestParams.IsConfidentialClient, "On confidential client, cache must be partition");
+
             IReadOnlyList<MsalAccessTokenCacheItem> tokenCacheItems = GetAllAccessTokensWithNoLocks(true, partitionKey);
             if (tokenCacheItems.Count == 0)
             {
