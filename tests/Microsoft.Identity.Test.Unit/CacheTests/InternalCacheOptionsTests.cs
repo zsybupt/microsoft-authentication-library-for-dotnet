@@ -50,21 +50,23 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
 
                 ConfidentialClientApplication app1 =
                     ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
-                                                              .WithClientSecret(TestConstants.ClientSecret)
-                                                              .WithHttpManager(httpManager)
-                                                              .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                                                        .WithClientSecret(TestConstants.ClientSecret)
+                                                        .WithHttpManager(httpManager)
+                                                        .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true })
+                                                        .BuildConcrete();
 
                 ConfidentialClientApplication app2 =
                    ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
-                                                             .WithClientSecret(TestConstants.ClientSecret)
-                                                             .WithHttpManager(httpManager)
-                                                              .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                                                       .WithClientSecret(TestConstants.ClientSecret)
+                                                       .WithHttpManager(httpManager)
+                                                       .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true })
+                                                       .BuildConcrete();
 
                 ConfidentialClientApplication app_withoutStaticCache =
                   ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
-                                                            .WithClientSecret(TestConstants.ClientSecret)
-                                                            .WithHttpManager(httpManager)
-                                                            .BuildConcrete();
+                                                      .WithClientSecret(TestConstants.ClientSecret)
+                                                      .WithHttpManager(httpManager)
+                                                      .BuildConcrete();
 
                 httpManager.AddMockHandlerSuccessfulClientCredentialTokenResponseMessage();
                 await ClientCredsAssertTokenSourceAsync(app1, "S1", TokenSource.IdentityProvider).ConfigureAwait(false);
@@ -72,15 +74,14 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
                 httpManager.AddMockHandlerSuccessfulClientCredentialTokenResponseMessage();
                 await ClientCredsAssertTokenSourceAsync(app1, "S2", TokenSource.IdentityProvider).ConfigureAwait(false);
 
-
                 await ClientCredsAssertTokenSourceAsync(app2, "S1", TokenSource.Cache).ConfigureAwait(false);
                 await ClientCredsAssertTokenSourceAsync(app2, "S2", TokenSource.Cache).ConfigureAwait(false);
 
                 ConfidentialClientApplication app3 =
                      ConfidentialClientApplicationBuilder.Create(TestConstants.ClientId)
-                                                               .WithClientSecret(TestConstants.ClientSecret)
-                                                               .WithHttpManager(httpManager)
-                                                              .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
+                                                         .WithClientSecret(TestConstants.ClientSecret)
+                                                         .WithHttpManager(httpManager)
+                                                         .WithInternalMemoryTokenCacheOptions(new InternalMemoryTokenCacheOptions() { UseSharedCache = true }).BuildConcrete();
 
                 await ClientCredsAssertTokenSourceAsync(app3, "S1", TokenSource.Cache).ConfigureAwait(false);
                 await ClientCredsAssertTokenSourceAsync(app3, "S2", TokenSource.Cache).ConfigureAwait(false);

@@ -21,17 +21,36 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
     internal class InMemoryPartitionedAppTokenCacheAccessor : ITokenCacheAccessor
     {
         // perf: do not use ConcurrentDictionary.Values as it takes a lock
-        internal /* internal for test only */ readonly ConcurrentDictionary<string, ConcurrentDictionary<string, MsalAccessTokenCacheItem>> AccessTokenCacheDictionary =
-            new ConcurrentDictionary<string, ConcurrentDictionary<string, MsalAccessTokenCacheItem>>(1, 1);
+        internal /* internal for test only */ readonly ConcurrentDictionary<string, ConcurrentDictionary<string, MsalAccessTokenCacheItem>> AccessTokenCacheDictionary;
+        internal /* internal for test only */  readonly ConcurrentDictionary<string, MsalAppMetadataCacheItem> AppMetadataDictionary;
 
-        internal /* internal for test only */  readonly ConcurrentDictionary<string, MsalAppMetadataCacheItem> AppMetadataDictionary =
+        private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, MsalAccessTokenCacheItem>> s_accessTokenCacheDictionary =
+            new ConcurrentDictionary<string, ConcurrentDictionary<string, MsalAccessTokenCacheItem>>();
+
+        private static readonly ConcurrentDictionary<string, MsalAppMetadataCacheItem> s_appMetadataDictionary =
            new ConcurrentDictionary<string, MsalAppMetadataCacheItem>(1, 1);
 
-        protected readonly ICoreLogger _logger;
 
-        public InMemoryPartitionedAppTokenCacheAccessor(ICoreLogger logger)
+        protected readonly ICoreLogger _logger;
+        private readonly InternalMemoryTokenCacheOptions _tokenCacheAccessorOptions;
+
+        public InMemoryPartitionedAppTokenCacheAccessor(
+            ICoreLogger logger, 
+            InternalMemoryTokenCacheOptions tokenCacheAccessorOptions)
         {
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
+            _tokenCacheAccessorOptions = tokenCacheAccessorOptions ?? new InternalMemoryTokenCacheOptions();
+
+            if (_tokenCacheAccessorOptions.UseSharedCache)
+            {
+                AccessTokenCacheDictionary = s_accessTokenCacheDictionary;              
+                AppMetadataDictionary = s_appMetadataDictionary;
+            }
+            else
+            {
+                AccessTokenCacheDictionary = new ConcurrentDictionary<string, ConcurrentDictionary<string, MsalAccessTokenCacheItem>>();
+                AppMetadataDictionary = new ConcurrentDictionary<string, MsalAppMetadataCacheItem>();
+            }
         }
 
         #region Add
