@@ -46,7 +46,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no refresh tokens in a client credential flow.
         /// </summary>
         public void SaveRefreshToken(MsalRefreshTokenCacheItem item)
         {
@@ -55,7 +55,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no ID tokens in a client credential flow.
         /// </summary>
         public void SaveIdToken(MsalIdTokenCacheItem item)
         {
@@ -64,7 +64,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no user accounts in a client credential flow.
         /// </summary>
         public void SaveAccount(MsalAccountCacheItem item)
         {
@@ -81,7 +81,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #region Get
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no ID tokens in a client credential flow.
         /// </summary>
         public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
         {
@@ -90,7 +90,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no user accounts in a client credential flow.
         /// </summary>
         public MsalAccountCacheItem GetAccount(MsalAccountCacheKey accountKey)
         {
