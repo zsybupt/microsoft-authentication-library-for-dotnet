@@ -128,8 +128,7 @@ namespace Microsoft.Identity.Client
         // this should not happen but we have this as a safe guard
         // against multiple matches.
         private void DeleteAccessTokensWithIntersectingScopes(
-            AuthenticationRequestParameters requestParams,
-            string partitionKeyFromResponse,
+            AuthenticationRequestParameters requestParams,            
             IEnumerable<string> environmentAliases,
             string tenantId,
             HashSet<string> scopeSet,
@@ -144,6 +143,7 @@ namespace Microsoft.Identity.Client
             }
 
             IList<MsalAccessTokenCacheItem> accessTokenItemList = new List<MsalAccessTokenCacheItem>();
+            var partitionKeyFromResponse = CacheKeyFactory.GetInternalPartitionKeyFromResponse(requestParams, homeAccountId);
             Debug.Assert(partitionKeyFromResponse != null || !requestParams.IsConfidentialClient, "On confidential client, cache must be partition");
 
             foreach (var accessToken in _accessor.GetAllAccessTokens(partitionKeyFromResponse))

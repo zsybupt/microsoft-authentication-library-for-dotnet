@@ -147,7 +147,12 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #endregion
 
         #region Get All
-        public IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokens(string partitionKey = null)
+
+        /// <summary>
+        /// WARNING: if partitonKey = null, this API is slow as it loads all tokens, not just from 1 partition. 
+        /// It should only to support external token caching, in the hope that the external token cache is partitioned.
+        /// </summary>
+        public virtual IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokens(string partitionKey = null)
         {
             if (string.IsNullOrEmpty(partitionKey))
             {
@@ -160,17 +165,17 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             }
         }
 
-        public IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokens(string partitionKey = null)
+        public virtual IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokens(string partitionKey = null)
         {
             return new List<MsalRefreshTokenCacheItem>();
         }
 
-        public IReadOnlyList<MsalIdTokenCacheItem> GetAllIdTokens(string partitionKey = null)
+        public virtual IReadOnlyList<MsalIdTokenCacheItem> GetAllIdTokens(string partitionKey = null)
         {
             return new List<MsalIdTokenCacheItem>();
         }
 
-        public IReadOnlyList<MsalAccountCacheItem> GetAllAccounts(string partitionKey = null)
+        public virtual IReadOnlyList<MsalAccountCacheItem> GetAllAccounts(string partitionKey = null)
         {
             return new List<MsalAccountCacheItem>();
         }
@@ -192,7 +197,11 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             // app metadata isn't removable
         }
 
-        public bool HasAccessOrRefreshTokens()
+        /// <summary>
+        /// WARNING: this API is slow as it loads all tokens, not just from 1 partition. It should only 
+        /// to support external token caching, in the hope that the external token cache is partitioned.
+        /// </summary>
+        public virtual bool HasAccessOrRefreshTokens()
         {
             return AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !token.Value.IsExpired()));
         }

@@ -53,7 +53,7 @@ namespace Microsoft.Identity.Client
             string preferredUsername = GetPreferredUsernameFromIdToken(isAdfsAuthority, idToken);
             string username = isAdfsAuthority ? idToken?.Upn : preferredUsername;
             string homeAccountId = GetHomeAccountId(requestParams, response, idToken);
-            string suggestedWebCacheKey = CacheKeyFactory.GetKeyFromResponse(requestParams, homeAccountId);
+            string suggestedWebCacheKey = CacheKeyFactory.GetExternalCacheKeyFromResponse(requestParams, homeAccountId);
 
             // Do a full instance discovery when saving tokens (if not cached),
             // so that the PreferredNetwork environment is up to date.
@@ -169,8 +169,7 @@ namespace Microsoft.Identity.Client
                         requestParams.RequestContext.Logger.Info("Saving AT in cache and removing overlapping ATs...");
 
                         DeleteAccessTokensWithIntersectingScopes(
-                            requestParams,
-                            suggestedWebCacheKey,
+                            requestParams,                           
                             instanceDiscoveryMetadata.Aliases,
                             tenantId,
                             msalAccessTokenCacheItem.ScopeSet,

@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Cache.Items;
@@ -226,7 +228,21 @@ namespace Microsoft.Identity.Test.Common.Core.Mocks
 
         public static void ExpireAccessTokens(ITokenCacheInternal tokenCache)
         {
-            var allAccessTokens = tokenCache.Accessor.GetAllAccessTokens();
+            IReadOnlyList<MsalAccessTokenCacheItem> allAccessTokens;
+
+            // avoid calling GetAllAccessTokens() on the strict accessors, as they will throw
+            if (tokenCache.Accessor is AppAccessorWithPartitionAssert partitionedAccessor)
+            {
+                allAccessTokens = partitionedAccessor.AccessTokenCacheDictionary.SelectMany(dict => dict.Value).Select(kv => kv.Value).ToList();
+            }
+            else if (tokenCache.Accessor is UserAccessorWithPartitionAsserts partitionedAccessor2)
+            {
+                allAccessTokens = partitionedAccessor2.AccessTokenCacheDictionary.SelectMany(dict => dict.Value).Select(kv => kv.Value).ToList();
+            }
+            else
+            {
+                allAccessTokens = tokenCache.Accessor.GetAllAccessTokens();
+            }
 
             foreach (MsalAccessTokenCacheItem atItem in allAccessTokens)
             {
