@@ -121,7 +121,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no refresh tokens in a client credential flow.
         /// </summary>
         public void DeleteRefreshToken(MsalRefreshTokenCacheItem item)
         {
@@ -130,7 +130,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no ID tokens in a client credential flow.
         /// </summary>
         public void DeleteIdToken(MsalIdTokenCacheItem item)
         {
@@ -139,7 +139,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         /// <summary>
         /// This method is not supported for the app token cache because
-        /// there are no refresh tokens, ID tokens, or accounts in a client credential flow
+        /// there are no user accounts in a client credential flow.
         /// </summary>
         public void DeleteAccount(MsalAccountCacheItem item)
         {

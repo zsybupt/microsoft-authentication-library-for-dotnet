@@ -9,6 +9,7 @@ using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Cache.Items;
 using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.PlatformsCommon.Factories;
+using Microsoft.Identity.Client.PlatformsCommon.Shared;
 using Microsoft.Identity.Client.Utils;
 using Microsoft.Identity.Test.Common.Core.Helpers;
 using Microsoft.Identity.Test.Unit;
@@ -98,9 +99,10 @@ namespace Microsoft.Identity.Test.Common.Core.Mocks
             string overridenScopes = null,
             string userAssertion = null,
             bool expiredAccessTokens = false,
-            bool addSecondAt = true,
-            bool addAccessTokenOnly = false)
+            bool addSecondAt = true)
         {
+            bool addAccessTokenOnly = accessor is InMemoryPartitionedAppTokenCacheAccessor;
+
             string clientInfo = MockHelpers.CreateClientInfo(uid, utid);
             string homeAccId = ClientInfo.CreateFromJson(clientInfo).ToAccountIdentifier();
 

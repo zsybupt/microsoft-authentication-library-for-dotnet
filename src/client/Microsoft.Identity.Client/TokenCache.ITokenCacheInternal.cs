@@ -169,7 +169,7 @@ namespace Microsoft.Identity.Client
                         requestParams.RequestContext.Logger.Info("Saving AT in cache and removing overlapping ATs...");
 
                         DeleteAccessTokensWithIntersectingScopes(
-                            requestParams,                           
+                            requestParams,
                             instanceDiscoveryMetadata.Aliases,
                             tenantId,
                             msalAccessTokenCacheItem.ScopeSet,
@@ -194,9 +194,18 @@ namespace Microsoft.Identity.Client
                         _accessor.SaveRefreshToken(msalRefreshTokenCacheItem);
                     }
 
-                    UpdateAppMetadata(requestParams.AppConfig.ClientId, instanceDiscoveryMetadata.PreferredCache, response.FamilyId);
+                    UpdateAppMetadata(
+                        requestParams.AppConfig.ClientId,
+                        instanceDiscoveryMetadata.PreferredCache,
+                        response.FamilyId);
 
-                    SaveToLegacyAdalCache(requestParams, response, msalRefreshTokenCacheItem, msalIdTokenCacheItem, tenantId, instanceDiscoveryMetadata);
+                    SaveToLegacyAdalCache(
+                        requestParams,
+                        response,
+                        msalRefreshTokenCacheItem,
+                        msalIdTokenCacheItem,
+                        tenantId,
+                        instanceDiscoveryMetadata);
                 }
                 finally
                 {
