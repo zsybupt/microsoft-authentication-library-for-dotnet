@@ -16,11 +16,11 @@ namespace Microsoft.Identity.Test.Common.Core.Helpers
             IPlatformProxy platformProxy)
             where T: AbstractApplicationBuilder<T>
         {
-            (platformProxy as AbstractPlatformProxy).AccessorForUserTokensForTest =
+            (platformProxy as AbstractPlatformProxy).UserTokenCacheAccessorForTest =
                    new UserAccessorWithPartitionAsserts(new NullLogger());
 
-            (platformProxy as AbstractPlatformProxy).AccessorForAppTokensForTest =
-                  new AppAccessorWithPartitionAssert(new NullLogger());
+            (platformProxy as AbstractPlatformProxy).AppTokenCacheAccessorForTest =
+                  new AppAccessorWithPartitionAsserts(new NullLogger());
 
             builder.Config.PlatformProxy = platformProxy;
             return (T)builder;

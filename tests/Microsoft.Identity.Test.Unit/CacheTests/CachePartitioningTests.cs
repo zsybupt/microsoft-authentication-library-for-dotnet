@@ -4,14 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Utils;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Identity.Test.Common.Core.Mocks;
 using Microsoft.Identity.Test.Common.Core.Helpers;
+using Microsoft.Identity.Test.Common.Core.Mocks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Identity.Test.Unit.CacheTests
 {
@@ -30,7 +29,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
                                                               .WithRedirectUri(TestConstants.RedirectUri)
                                                               .WithClientSecret(TestConstants.ClientSecret)
                                                               .WithHttpManager(httpManager)
-                                                              // this will fail if cache partitioning rules are broken (but not when cache serialization is also used)                                                              
+                                                              // this will fail if cache partitioning rules are broken (but not when cache serialization is also used)
                                                               .WithCachePartitioningAsserts(harness.ServiceBundle.PlatformProxy)
                                                               .BuildConcrete();
 

@@ -10,9 +10,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Identity.Test.Common.Core.Helpers
 {
-    internal class AppAccessorWithPartitionAssert : InMemoryPartitionedAppTokenCacheAccessor
+    internal class AppAccessorWithPartitionAsserts : InMemoryPartitionedAppTokenCacheAccessor
     {
-        public AppAccessorWithPartitionAssert(ICoreLogger logger) : base(logger)
+        public AppAccessorWithPartitionAsserts(ICoreLogger logger) : base(logger)
         {
 
         }

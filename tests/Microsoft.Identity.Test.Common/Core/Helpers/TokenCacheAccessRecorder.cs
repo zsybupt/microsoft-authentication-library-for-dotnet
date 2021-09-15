@@ -29,7 +29,7 @@ namespace Microsoft.Identity.Test.Common.Core.Helpers
         {
             _tokenCache = tokenCache;
 
-            if ((tokenCache as ITokenCacheInternal).Accessor.GetType() == typeof(AppAccessorWithPartitionAssert) ||
+            if ((tokenCache as ITokenCacheInternal).Accessor.GetType() == typeof(AppAccessorWithPartitionAsserts) ||
                 (tokenCache as ITokenCacheInternal).Accessor.GetType() == typeof(UserAccessorWithPartitionAsserts))
             {
                 Assert.Fail("[TEST FAILURE] This is test setup issue. You cannot use TokenCacheAccessRecorder and WithCachePartitioningAsserts at the same time");

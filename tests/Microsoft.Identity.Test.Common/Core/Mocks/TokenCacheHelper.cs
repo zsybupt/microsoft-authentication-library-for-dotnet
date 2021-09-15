@@ -231,13 +231,13 @@ namespace Microsoft.Identity.Test.Common.Core.Mocks
             IReadOnlyList<MsalAccessTokenCacheItem> allAccessTokens;
 
             // avoid calling GetAllAccessTokens() on the strict accessors, as they will throw
-            if (tokenCache.Accessor is AppAccessorWithPartitionAssert partitionedAccessor)
+            if (tokenCache.Accessor is AppAccessorWithPartitionAsserts appPartitionedAccessor)
             {
-                allAccessTokens = partitionedAccessor.AccessTokenCacheDictionary.SelectMany(dict => dict.Value).Select(kv => kv.Value).ToList();
+                allAccessTokens = appPartitionedAccessor.AccessTokenCacheDictionary.SelectMany(dict => dict.Value).Select(kv => kv.Value).ToList();
             }
-            else if (tokenCache.Accessor is UserAccessorWithPartitionAsserts partitionedAccessor2)
+            else if (tokenCache.Accessor is UserAccessorWithPartitionAsserts userPartitionedAccessor)
             {
-                allAccessTokens = partitionedAccessor2.AccessTokenCacheDictionary.SelectMany(dict => dict.Value).Select(kv => kv.Value).ToList();
+                allAccessTokens = userPartitionedAccessor.AccessTokenCacheDictionary.SelectMany(dict => dict.Value).Select(kv => kv.Value).ToList();
             }
             else
             {
