@@ -104,6 +104,7 @@ namespace Microsoft.Identity.Test.Unit.PoP
         }
 
         [TestMethod]
+        [Ignore] // bad test https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/issues/2891
         public async Task ValidateKeyExpirationAsync()
         {
             using (var harness = CreateTestHarness())

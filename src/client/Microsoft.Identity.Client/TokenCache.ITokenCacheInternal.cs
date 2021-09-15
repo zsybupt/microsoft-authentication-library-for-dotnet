@@ -79,6 +79,10 @@ namespace Microsoft.Identity.Client
 
             if (!string.IsNullOrEmpty(response.RefreshToken))
             {
+                Debug.Assert(
+                    requestParams.ApiId != ApiEvent.ApiIds.AcquireTokenForClient, 
+                    "client_credentials flow should receive RT");
+
                 msalRefreshTokenCacheItem = new MsalRefreshTokenCacheItem(
                                     instanceDiscoveryMetadata.PreferredCache,
                                     requestParams.AppConfig.ClientId,
@@ -97,6 +101,10 @@ namespace Microsoft.Identity.Client
             Account account = null;
             if (idToken != null)
             {
+                Debug.Assert(
+                    requestParams.ApiId != ApiEvent.ApiIds.AcquireTokenForClient,
+                    "client_credentials flow should receive IdToken");
+
                 msalIdTokenCacheItem = new MsalIdTokenCacheItem(
                     instanceDiscoveryMetadata.PreferredCache,
                     requestParams.AppConfig.ClientId,
