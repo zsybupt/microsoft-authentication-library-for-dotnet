@@ -47,7 +47,6 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         public void SaveAccessToken(MsalAccessTokenCacheItem item)
         {
             string itemKey = item.GetKey().ToString();
-
             string partitionKey = CacheKeyFactory.GetKeyFromCachedItem(item);
 
             AccessTokenCacheDictionary
@@ -174,7 +173,6 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
                     "Cannot delete account because it was not found in the cache");
             }
         }
-
         #endregion
 
         #region Get All
