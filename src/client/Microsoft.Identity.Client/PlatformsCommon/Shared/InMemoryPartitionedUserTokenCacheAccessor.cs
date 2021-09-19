@@ -57,6 +57,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         {
             string itemKey = item.GetKey().ToString();
             string partitionKey = CacheKeyFactory.GetKeyFromCachedItem(item);
+
             RefreshTokenCacheDictionary
                 .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalRefreshTokenCacheItem>())[itemKey] = item;
         }
