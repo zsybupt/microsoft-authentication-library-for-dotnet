@@ -56,23 +56,39 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         #region Add
         public void SaveAccessToken(MsalAccessTokenCacheItem item)
         {
-            var partitionKey = CacheKeyFactory.GetClientCredentialKey(item.ClientId, item.TenantId);
             string itemKey = item.GetKey().ToString();
+            string partitionKey = CacheKeyFactory.GetClientCredentialKey(item.ClientId, item.TenantId);
+
             // if a conflict occurs, pick the latest value
             AccessTokenCacheDictionary
                 .GetOrAdd(partitionKey, new ConcurrentDictionary<string, MsalAccessTokenCacheItem>())[itemKey] = item;
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens in a client credential flow.
+        /// </summary>
         public void SaveRefreshToken(MsalRefreshTokenCacheItem item)
         {
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no ID tokens in a client credential flow.
+        /// </summary>
         public void SaveIdToken(MsalIdTokenCacheItem item)
         {
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no user accounts in a client credential flow.
+        /// </summary>
         public void SaveAccount(MsalAccountCacheItem item)
         {
+            throw new NotSupportedException();
         }
 
         public void SaveAppMetadata(MsalAppMetadataCacheItem item)
@@ -82,11 +98,23 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
         }
         #endregion
 
-        #region Get            
+        #region Get
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no ID tokens in a client credential flow.
+        /// </summary>
+        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
+        {
+            throw new NotSupportedException();
+        }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no user accounts in a client credential flow.
+        /// </summary>
         public MsalAccountCacheItem GetAccount(MsalAccountCacheKey accountKey)
         {
-            return null;
+            throw new NotSupportedException();
         }
 
         public MsalAppMetadataCacheItem GetAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
@@ -110,26 +138,41 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             }
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no refresh tokens in a client credential flow.
+        /// </summary>
         public void DeleteRefreshToken(MsalRefreshTokenCacheItem item)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no ID tokens in a client credential flow.
+        /// </summary>
         public void DeleteIdToken(MsalIdTokenCacheItem item)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// This method is not supported for the app token cache because
+        /// there are no user accounts in a client credential flow.
+        /// </summary>
         public void DeleteAccount(MsalAccountCacheItem item)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
-
-
         #endregion
 
         #region Get All
-        public IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokens(string partitionKey = null)
+
+        /// <summary>
+        /// WARNING: if partitonKey = null, this API is slow as it loads all tokens, not just from 1 partition. 
+        /// It should only to support external token caching, in the hope that the external token cache is partitioned.
+        /// </summary>
+        public virtual IReadOnlyList<MsalAccessTokenCacheItem> GetAllAccessTokens(string partitionKey = null)
         {
             if (string.IsNullOrEmpty(partitionKey))
             {
@@ -142,17 +185,17 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             }
         }
 
-        public IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokens(string partitionKey = null)
+        public virtual IReadOnlyList<MsalRefreshTokenCacheItem> GetAllRefreshTokens(string partitionKey = null)
         {
             return new List<MsalRefreshTokenCacheItem>();
         }
 
-        public IReadOnlyList<MsalIdTokenCacheItem> GetAllIdTokens(string partitionKey = null)
+        public virtual IReadOnlyList<MsalIdTokenCacheItem> GetAllIdTokens(string partitionKey = null)
         {
             return new List<MsalIdTokenCacheItem>();
         }
 
-        public IReadOnlyList<MsalAccountCacheItem> GetAllAccounts(string partitionKey = null)
+        public virtual IReadOnlyList<MsalAccountCacheItem> GetAllAccounts(string partitionKey = null)
         {
             return new List<MsalAccountCacheItem>();
         }
@@ -165,7 +208,7 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
 
         public void SetiOSKeychainSecurityGroup(string keychainSecurityGroup)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public virtual void Clear()
@@ -174,21 +217,13 @@ namespace Microsoft.Identity.Client.PlatformsCommon.Shared
             // app metadata isn't removable
         }
 
-        public bool HasAccessOrRefreshTokens()
+        /// <summary>
+        /// WARNING: this API is slow as it loads all tokens, not just from 1 partition. It should only 
+        /// to support external token caching, in the hope that the external token cache is partitioned.
+        /// </summary>
+        public virtual bool HasAccessOrRefreshTokens()
         {
-            return AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !IsAtExpired(token.Value)));
+            return AccessTokenCacheDictionary.Any(partition => partition.Value.Any(token => !token.Value.IsExpired()));
         }
-
-        private bool IsAtExpired(MsalAccessTokenCacheItem at)
-        {
-            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
-        }
-
-        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
-        {
-            return null; 
-        }
-
-       
     }
 }

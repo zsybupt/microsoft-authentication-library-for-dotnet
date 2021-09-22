@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.ApiConfig.Parameters;
 using Microsoft.Identity.Client.Cache;
-using Microsoft.Identity.Client.Cache.Items;
 using Microsoft.Identity.Client.Instance;
 using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.Internal.Requests;
@@ -15,7 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Identity.Test.Unit.CacheTests
 {
     [TestClass]
-    public class SuggestedWebCacheKeyTests
+    public class CacheKeyFactoryTests
     {
         private IServiceBundle _serviceBundle;
 
@@ -30,20 +29,20 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         {
             // Arrange
             var appTokenCache = new TokenCache(_serviceBundle, isApplicationTokenCache: true);
-            var requestContext = new RequestContext(_serviceBundle , Guid.NewGuid());
+            var requestContext = new RequestContext(_serviceBundle, Guid.NewGuid());
             var authority = Authority.CreateAuthority(TestConstants.ADFSAuthority, true);
 
             requestContext.ServiceBundle.Config.AuthorityInfo = authority.AuthorityInfo;
 
             var acquireTokenCommonParameters = new AcquireTokenCommonParameters
             {
-                ApiId = ApiEvent.ApiIds.AcquireTokenForClient,                
+                ApiId = ApiEvent.ApiIds.AcquireTokenForClient,
             };
 
             var parameters = new AuthenticationRequestParameters(
                 _serviceBundle,
                 appTokenCache,
-                acquireTokenCommonParameters, 
+                acquireTokenCommonParameters,
                 requestContext,
                 authority);
 
@@ -62,7 +61,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         {
             // Arrange
             var appTokenCache = new TokenCache(_serviceBundle, isApplicationTokenCache: true);
-            var requestContext = new RequestContext(_serviceBundle , Guid.NewGuid());
+            var requestContext = new RequestContext(_serviceBundle, Guid.NewGuid());
             var tenantAuthority = AuthorityInfo.FromAadAuthority(AzureCloudInstance.AzurePublic, tenant: TestConstants.AadTenantId, validateAuthority: false);
             var acquireTokenCommonParameters = new AcquireTokenCommonParameters
             {
@@ -73,8 +72,8 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
             var parameters = new AuthenticationRequestParameters(
                 _serviceBundle,
                 appTokenCache,
-                acquireTokenCommonParameters, 
-                requestContext, 
+                acquireTokenCommonParameters,
+                requestContext,
                 Authority.CreateAuthority(tenantAuthority));
 
 
@@ -122,7 +121,7 @@ namespace Microsoft.Identity.Test.Unit.CacheTests
         [TestMethod]
         public void PartitionKeyForCache()
         {
-            var cache = new TokenCache(_serviceBundle, isApplicationTokenCache: false) ;
+            var cache = new TokenCache(_serviceBundle, isApplicationTokenCache: false);
             var accessor = (cache as ITokenCacheInternal).Accessor;
             TokenCacheHelper.PopulateCache((cache as ITokenCacheInternal).Accessor);
 

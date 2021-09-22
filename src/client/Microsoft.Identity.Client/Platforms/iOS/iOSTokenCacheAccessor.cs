@@ -77,6 +77,7 @@ namespace Microsoft.Identity.Client.Platforms.iOS
             _requestContext = requestContext;
         }
 
+        #region SaveItem
         public void SaveAccessToken(MsalAccessTokenCacheItem item)
         {
             IiOSKey key = item.GetKey();
@@ -97,6 +98,20 @@ namespace Microsoft.Identity.Client.Platforms.iOS
         {
             Save(item.GetKey(), item.ToJsonString());
         }
+        #endregion
+
+        #region GetItem
+        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
+        {
+            var idTokenKey = accessTokenCacheItem.GetIdTokenItemKey();
+            return MsalIdTokenCacheItem.FromJsonString(GetPayload(idTokenKey));
+        }
+
+        public MsalAccountCacheItem GetAccount(MsalAccountCacheKey accountKey)
+        {
+            return MsalAccountCacheItem.FromJsonString(GetPayload(accountKey));
+        }
+        #endregion
 
         #region DeleteItem
         public void DeleteAccessToken(MsalAccessTokenCacheItem item)
@@ -324,30 +339,14 @@ namespace Microsoft.Identity.Client.Platforms.iOS
 
             RemoveByType(MsalCacheKeys.iOSAuthorityTypeToAttrType[CacheAuthorityType.MSSTS.ToString()]);
         }
-       
-        public MsalIdTokenCacheItem GetIdToken(MsalAccessTokenCacheItem accessTokenCacheItem)
-        {
-            var idTokenKey = accessTokenCacheItem.GetIdTokenItemKey();
-            return MsalIdTokenCacheItem.FromJsonString(GetPayload(idTokenKey));
-        }
 
-        public MsalAccountCacheItem GetAccount(MsalAccountCacheKey accountKey)
-        {
-            return MsalAccountCacheItem.FromJsonString(GetPayload(accountKey));
-        }
-
+        /// <summary>
+        /// This method is used during token cache serialization which is not supported for iOS.
+        /// </summary>
         public bool HasAccessOrRefreshTokens()
         {
-            return GetPayloadAsString((int)MsalCacheKeys.iOSCredentialAttrType.RefreshToken).Count > 0 ||
-                GetPayloadAsString((int)MsalCacheKeys.iOSCredentialAttrType.AccessToken)
-                .Any(token => !IsAtExpired(MsalAccessTokenCacheItem.FromJsonString(token)));
+            throw new NotSupportedException();
         }
-
-        private bool IsAtExpired(MsalAccessTokenCacheItem at)
-        {
-            return at.ExpiresOn < DateTime.UtcNow + Internal.Constants.AccessTokenExpirationBuffer;
-        }
-
    
         #region AppMetatada - not implemented on iOS
         public MsalAppMetadataCacheItem ReadAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
@@ -375,9 +374,7 @@ namespace Microsoft.Identity.Client.Platforms.iOS
         public MsalAppMetadataCacheItem GetAppMetadata(MsalAppMetadataCacheKey appMetadataKey)
         {
             throw new NotImplementedException();
-        }
-
-       
+        }     
         #endregion
     }
 }
