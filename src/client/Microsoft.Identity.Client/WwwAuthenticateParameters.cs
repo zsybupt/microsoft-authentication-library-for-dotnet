@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -59,6 +59,13 @@ namespace Microsoft.Identity.Client
         /// Authority from which to request an access token.
         /// </summary>
         public string Authority { get; set; }
+
+        /// <summary>
+        /// AAD tenant ID to which the Azure subscription belongs to.
+        /// </summary>
+        public string TenantId => Instance.Authority
+                                          .CreateAuthority(Authority, validateAuthority: true)
+                                          .TenantId;
 
         /// <summary>
         /// Claims demanded by the web API.
