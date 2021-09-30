@@ -173,9 +173,31 @@ namespace Microsoft.Identity.Test.Unit
             var httpClientFactory = Substitute.For<IMsalHttpClientFactory>();
             httpClientFactory.GetHttpClient().Returns(httpClient);
 
-            var _ = await WwwAuthenticateParameters.CreateFromResourceResponseAsync(httpClientFactory, resourceUri).ConfigureAwait(false);
+            _ = await WwwAuthenticateParameters.CreateFromResourceResponseAsync(httpClientFactory, resourceUri).ConfigureAwait(false);
 
             httpClientFactory.Received().GetHttpClient();
+        }
+
+        [TestMethod]
+        public async Task CreateFromResourceResponseAsync_HttpClientFactory_TenantId_Async()
+        {
+            const string resourceUri = "https://example.com/";
+            string tenantId = Guid.NewGuid().ToString();
+
+            var handler = new MockHttpMessageHandler
+            {
+                ExpectedMethod = HttpMethod.Get,
+                ExpectedUrl = resourceUri,
+                ResponseMessage = CreateInvalidTokenHttpErrorResponse(tenantId)
+            };
+            var httpClient = new HttpClient(handler);
+
+            var httpClientFactory = Substitute.For<IMsalHttpClientFactory>();
+            httpClientFactory.GetHttpClient().Returns(httpClient);
+
+            var authParams = await WwwAuthenticateParameters.CreateFromResourceResponseAsync(httpClientFactory, resourceUri).ConfigureAwait(false);
+
+            Assert.AreEqual(authParams.TenantId, tenantId);
         }
 
         [DataRow(null)]
@@ -228,7 +250,7 @@ namespace Microsoft.Identity.Test.Unit
         [DataRow(null)]
         [DataRow("")]
         [TestMethod]
-        public async Task CreateFromResourceResponseAsync_ResourceUri_Async(string resourceUri)
+        public async Task CreateFromResourceResponseAsync_Incorrect_ResourceUri_Async(string resourceUri)
         {
             Func<Task> action = () => WwwAuthenticateParameters.CreateFromResourceResponseAsync(resourceUri);
 
@@ -300,13 +322,13 @@ namespace Microsoft.Identity.Test.Unit
             };
         }
 
-        private static HttpResponseMessage CreateInvalidTokenHttpErrorResponse()
+        private static HttpResponseMessage CreateInvalidTokenHttpErrorResponse(string tenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47")
         {
             return new HttpResponseMessage(HttpStatusCode.Unauthorized)
             {
                 Headers =
                 {
-                    { WwwAuthenticateHeaderName, "Bearer authorization_uri=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\", error=\"invalid_token\", error_description=\"The authentication failed because of missing 'Authorization' header.\"" }
+                    { WwwAuthenticateHeaderName, $"Bearer authorization_uri=\"https://login.windows.net/{tenantId}\", error=\"invalid_token\", error_description=\"The authentication failed because of missing 'Authorization' header.\"" }
                 }
             };
         }
