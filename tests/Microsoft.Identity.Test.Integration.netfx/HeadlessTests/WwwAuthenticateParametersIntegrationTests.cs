@@ -19,7 +19,7 @@ namespace Microsoft.Identity.Test.Integration.NetFx.HeadlessTests
 
             Assert.AreEqual("https://vault.azure.net", authParams.Resource);
             Assert.AreEqual("login.windows.net", new Uri(authParams.Authority).Host);
-            Assert.IsNull(authParams.TenantId);
+            Assert.AreEqual("72f988bf-86f1-41af-91ab-2d7cd011db47", authParams.TenantId); // because the Key Vault resource belong to Microsoft Corp tenant
             Assert.AreEqual("https://vault.azure.net/.default", authParams.Scopes.FirstOrDefault());
             Assert.AreEqual(2, authParams.RawParameters.Count);
             Assert.IsNull(authParams.Claims);
@@ -33,7 +33,7 @@ namespace Microsoft.Identity.Test.Integration.NetFx.HeadlessTests
 
             Assert.AreEqual("00000003-0000-0000-c000-000000000000", authParams.Resource);
             Assert.AreEqual("https://login.microsoftonline.com/common", authParams.Authority);
-            Assert.IsNull(authParams.TenantId);
+            Assert.AreEqual("common", authParams.TenantId);
             Assert.AreEqual("00000003-0000-0000-c000-000000000000/.default", authParams.Scopes.FirstOrDefault());
             Assert.AreEqual(3, authParams.RawParameters.Count);
             Assert.IsNull(authParams.Claims);
